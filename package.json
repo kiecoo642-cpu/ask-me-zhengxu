@@ -1,0 +1,45 @@
+{
+  "name": "ask-me-career-agent",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev --webpack",
+    "build": "next build --webpack",
+    "start": "next start",
+    "lint": "eslint .",
+    "test": "tsx --test tests/*.test.ts",
+    "upload:resume": "dotenv -e .env.local -- tsx scripts/upload-resume.ts",
+    "knowledge:sync": "dotenv -e .env.local -- tsx scripts/sync-obsidian.ts",
+    "eval:interview": "dotenv -e .env.local -- tsx scripts/run-interview-eval.ts",
+    "quality:report": "dotenv -e .env.local -- tsx scripts/run-quality-report.ts"
+  },
+  "dependencies": {
+    "@ai-sdk/deepseek": "^3.0.26",
+    "@ai-sdk/openai-compatible": "^3.0.92",
+    "@neondatabase/serverless": "^1.1.0",
+    "@phosphor-icons/react": "^2.1.10",
+    "@upstash/redis": "^1.38.0",
+    "@vercel/blob": "^2.6.1",
+    "ai": "^7.0.58",
+    "next": "16.4.1",
+    "react": "19.2.7",
+    "react-dom": "19.2.7",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "dotenv-cli": "^11.0.0",
+    "eslint": "^9.0.0",
+    "eslint-config-next": "16.2.10",
+    "tsx": "^4.23.1",
+    "typescript": "^5.9.0"
+  },
+  "overrides": {
+    "next": {
+      "postcss": "8.5.10"
+    }
+  }
+}

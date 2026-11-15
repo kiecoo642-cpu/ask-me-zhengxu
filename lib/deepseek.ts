@@ -1,0 +1,261 @@
+import type { DeepSeekLanguageModelChatOptions } from "@ai-sdk/deepseek";
+import { APICallError, generateText, Output, streamText, type ModelMessage } from "ai";
+import { createLanguageModel, resolveProviderConfig, type ResolvedProviderConfig } from "./ai-provider";
+import { buildReviewPrompt, interviewReviewSchema } from "./interview-review";
+import { plannedQuestionFrameSchema } from "./question-contracts";
+import type { AnswerPlan, ChatMessage } from "./types";
+
+export type ModelPath = "flash" | "pro";
+
+export function resolveDeepSeekBaseURL(value = process.env.DEEPSEEK_BASE_URL) {
+  return value?.trim() || "https://api.deepseek.com";
+}
+
+export class DeepSeekUpstreamError extends Error {
+  constructor(public readonly status: number, message: string) {
+    super(message);
+    this.name = "DeepSeekUpstreamError";
+  }
+}
+
+export class DeepSeekPlannerError extends Error {
+  constructor(public readonly reason: "empty", message: string) {
+    super(message);
+    this.name = "DeepSeekPlannerError";
+  }
+}
+
+interface GenerateInput {
+  messages: Array<ChatMessage | { role: "system"; content: string }>;
+  signal: AbortSignal;
+  userId?: string;
+}
+
+export interface DeepSeekStream {
+  textStream: AsyncIterable<string>;
+  fullStream: AsyncIterable<{ type: string; [key: string]: unknown }>;
+  usage: PromiseLike<{ totalTokens?: number }>;
+  modelPath: ModelPath;
+}
+
+interface PlanQuestionInput {
+  question: string;
+  history: ChatMessage[];
+  signal: AbortSignal;
+  userId?: string;
+}
+
+interface ReviewAnswerInput {
+  question: string;
+  candidate: string;
+  plan: AnswerPlan;
+  localTriggers: string[];
+  signal: AbortSignal;
+  userId?: string;
+}
+
+function toModelPrompt(messages: GenerateInput["messages"]) {
+  const instructions = messages
+    .filter((message) => message.role === "system")
+    .map((message) => message.content)
+    .join("\n\n");
+  const conversational = messages
+    .filter((message) => message.role !== "system")
+    .map((message) => ({ role: message.role, content: message.content })) as ModelMessage[];
+  return { instructions, messages: conversational };
+}
+
+function providerOptionsFor(config: ResolvedProviderConfig, mode: "fast" | "review") {
+  if (config.presetId !== "deepseek") return undefined;
+  return {
+    deepseek: mode === "review"
+      ? { thinking: { type: "enabled" }, reasoningEffort: "high" }
+      : { thinking: { type: "disabled" } },
+  } satisfies Record<string, DeepSeekLanguageModelChatOptions>;
+}
+
+function statusFrom(error: unknown) {
+  const statusCode = typeof error === "object" && error !== null && "statusCode" in error
+    ? (error as { statusCode?: unknown }).statusCode
+    : undefined;
+  return typeof statusCode === "number"
+    ? statusCode
+    : APICallError.isInstance(error) && typeof error.statusCode === "number"
+      ? error.statusCode
+      : 502;
+}
+
+function canFallbackToPro(error: unknown) {
+  if (error instanceof Error && error.name === "AbortError") return false;
+  const status = statusFrom(error);
+  return status === 408 || status === 409 || status === 425 || status === 429 || status >= 500;
+}
+
+function modelPathFor(modelId: string, config: ResolvedProviderConfig): ModelPath {
+  return modelId === config.fallbackModel && config.fallbackModel !== config.primaryModel ? "pro" : "flash";
+}
+
+async function withProFallback<T>(config: ResolvedProviderConfig, run: (modelId: string) => Promise<T>) {
+  try {
+    return { result: await run(config.primaryModel), modelId: config.primaryModel };
+  } catch (error) {
+    if (config.primaryModel === config.fallbackModel || !canFallbackToPro(error)) throw error;
+    return { result: await run(config.fallbackModel), modelId: config.fallbackModel };
+  }
+}
+
+function upstreamError(error: unknown, fallbackMessage: string) {
+  if (error instanceof DeepSeekUpstreamError) return error;
+  return new DeepSeekUpstreamError(statusFrom(error), fallbackMessage);
+}
+
+export async function planDeepSeekQuestion(input: PlanQuestionInput) {
+  const config = resolveProviderConfig();
+  const providerOptions = providerOptionsFor(config, "fast");
+  const recentQuestions = input.history
+    .filter((message) => message.role === "user")
+    .slice(-4)
+    .map((message) => message.content.slice(0, 180));
+  let generated;
+  try {
+    generated = await withProFallback(config, (modelId) => generateText({
+      model: createLanguageModel(modelId, config),
+      output: Output.object({ schema: plannedQuestionFrameSchema }),
+      instructions: `你只负责把面试问题分类为 JSON，不回答问题，也不生成候选人事实。先判断提问动作 answerIntent，再判断 questionMode 和 evidencePolicy，最后识别讨论对象 topic、targetRole 与 focusTerms。不能因为“商业化”一个词就把岗位匹配题判成结果题；不能因为“问题、产品、项目”等弱词召回单个项目。
+可选 questionMode：agent_meta（询问 Agent 能力或质疑回答方式）、candidate_fact（候选人的真实经历、结果或任职事实）、candidate_reasoning（面试中的方法、动机、假设和判断）。
+可选 evidencePolicy：required（必须有公开事实）、supporting（事实用于增强但不限制方法论）、none（Agent 能力说明或通用回答）。
+可选 answerIntent：agent_identity, capability_scope, introduction, career_transition, role_fit, representative_project, project_overview, project_problem, contribution, ai_collaboration, challenge, diagnosis, result, limitation, skills, experience, experience_value, privacy, education, credentials, hiring_recommendation, general。
+可选 topic：profile, role_fit, education, atalent, agent_sandbox, rag_eval, jira_tool, campus, ask_me, skills, enterprise_ai, agent, unknown。
+可选 facet：overview, problem, method, contribution, architecture, collaboration, evaluation, transfer, example, result, boundary, fit。
+activeProject 只能省略或选择 atalent-ihg, agent-eval-sandbox, rag-retrieval-eval, jira-tool, campus-workflow, ask-me。focusTerms 与 requestedDimensions 各写本题需要的 1-4 项；targetRole 仅在问题明确提到岗位时填写；confidence 是 0-1。必须输出完整 JSON。`,
+      prompt: `最近问题：${recentQuestions.length ? recentQuestions.join("｜") : "无"}\n当前问题：${input.question}\n结构示例：{"topic":"profile","facet":"transfer","answerIntent":"career_transition","questionMode":"candidate_fact","evidencePolicy":"required","focusTerms":["方向选择","能力连续性"],"requestedDimensions":["选择原因","经历迁移"],"useHistory":true,"confidence":0.92}`,
+      ...(providerOptions ? { providerOptions } : {}),
+      temperature: 0.1,
+      maxOutputTokens: 520,
+      abortSignal: input.signal,
+    }));
+  } catch (error) {
+    throw upstreamError(error, "问题规划服务返回异常");
+  }
+
+  const { result, modelId } = generated;
+  if (!result.output) throw new DeepSeekPlannerError("empty", "问题规划返回空内容");
+  return {
+    frame: plannedQuestionFrameSchema.parse(result.output),
+    totalTokens: Number(result.usage?.totalTokens ?? 0),
+    modelPath: modelPathFor(modelId, config),
+  };
+}
+
+export async function generateDeepSeekAnswer(input: GenerateInput) {
+  const config = resolveProviderConfig();
+  const providerOptions = providerOptionsFor(config, "fast");
+  let generated: { result: Awaited<ReturnType<typeof generateText>>; modelId: string };
+  try {
+    generated = await withProFallback(config, (modelId) => generateText({
+      model: createLanguageModel(modelId, config),
+      ...toModelPrompt(input.messages),
+      ...(providerOptions ? { providerOptions } : {}),
+      temperature: 0.45,
+      maxOutputTokens: 1_100,
+      abortSignal: input.signal,
+    }));
+  } catch (error) {
+    throw upstreamError(error, "模型服务返回异常");
+  }
+
+  if (!generated.result.text.trim() && generated.modelId !== config.fallbackModel) {
+    try {
+      generated = {
+        result: await generateText({
+          model: createLanguageModel(config.fallbackModel, config),
+          ...toModelPrompt(input.messages),
+          ...(providerOptions ? { providerOptions } : {}),
+          temperature: 0.45,
+          maxOutputTokens: 1_100,
+          abortSignal: input.signal,
+        }),
+        modelId: config.fallbackModel,
+      };
+    } catch (error) {
+      throw upstreamError(error, "模型服务返回异常");
+    }
+  }
+
+  const { result, modelId } = generated;
+  if (!result.text.trim()) throw new DeepSeekUpstreamError(502, "模型返回空回答");
+  return {
+    text: result.text.trim(),
+    totalTokens: Number(result.usage?.totalTokens ?? 0),
+    modelPath: modelPathFor(modelId, config),
+  };
+}
+
+export function streamDeepSeekAnswer(input: GenerateInput, modelPath: ModelPath = "flash"): DeepSeekStream {
+  const config = resolveProviderConfig();
+  const providerOptions = providerOptionsFor(config, "fast");
+  const modelId = modelPath === "pro" ? config.fallbackModel : config.primaryModel;
+  const result = streamText({
+    model: createLanguageModel(modelId, config),
+    ...toModelPrompt(input.messages),
+    ...(providerOptions ? { providerOptions } : {}),
+    temperature: 0.45,
+    maxOutputTokens: 1_100,
+    maxRetries: 0,
+    onError: () => undefined,
+    abortSignal: input.signal,
+  });
+  return {
+    textStream: result.textStream,
+    fullStream: result.fullStream as AsyncIterable<{ type: string; [key: string]: unknown }>,
+    usage: result.usage,
+    modelPath,
+  };
+}
+
+export async function reviewDeepSeekAnswer(input: ReviewAnswerInput) {
+  const config = resolveProviderConfig();
+  const providerOptions = providerOptionsFor(config, "review");
+  const runReview = async () => {
+    const generated = await generateText({
+      model: createLanguageModel(config.fallbackModel, config),
+      output: Output.object({ schema: interviewReviewSchema }),
+      instructions: buildReviewPrompt(input.question, input.candidate, input.plan, input.localTriggers),
+      prompt: "请完成最终面试质量审校，并严格返回结构化结果。",
+      ...(providerOptions ? { providerOptions } : {}),
+      temperature: 0.2,
+      maxOutputTokens: 1_400,
+      abortSignal: input.signal,
+    });
+    if (!generated.output) throw new DeepSeekUpstreamError(502, "最终审校模型返回空结果");
+    return generated;
+  };
+
+  let result;
+  try {
+    result = await runReview();
+  } catch (error) {
+    if (!canFallbackToPro(error)) throw upstreamError(error, "最终审校模型服务返回异常");
+    try {
+      result = await runReview();
+    } catch (retryError) {
+      throw upstreamError(retryError, "最终审校模型服务返回异常");
+    }
+  }
+
+  return {
+    review: result.output,
+    totalTokens: Number(result.usage?.totalTokens ?? 0),
+    modelPath: "pro" as const,
+  };
+}
+
+export function deepSeekModelConfig() {
+  const config = resolveProviderConfig();
+  return {
+    provider: config.provider,
+    baseURL: config.baseURL,
+    primary: config.primaryModel,
+    fallback: config.fallbackModel,
+  };
+}

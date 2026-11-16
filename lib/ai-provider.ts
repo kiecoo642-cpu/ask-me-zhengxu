@@ -2,7 +2,16 @@ import { createDeepSeek } from "@ai-sdk/deepseek";
 import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
 import type { LanguageModel } from "ai";
 
-export type KnownProviderId = "deepseek" | "gemini" | "openrouter" | "groq" | "together" | "openai" | "openai-compatible";
+export type KnownProviderId =
+  | "deepseek"
+  | "gemini"
+  | "openrouter"
+  | "groq"
+  | "together"
+  | "nvidia"
+  | "zai"
+  | "openai"
+  | "openai-compatible";
 
 export interface ProviderPreset {
   id: KnownProviderId;
@@ -26,24 +35,24 @@ export const PROVIDER_PRESETS: Record<KnownProviderId, ProviderPreset> = {
     id: "gemini",
     label: "Google Gemini (OpenAI-compatible)",
     defaultBaseURL: "https://generativelanguage.googleapis.com/v1beta/openai/",
-    defaultPrimaryModel: "gemini-3.5-flash",
-    defaultFallbackModel: "gemini-3.5-flash",
+    defaultPrimaryModel: "gemini-4-hydrogen",
+    defaultFallbackModel: "gemini-4-hydrogen",
     envApiKeyNames: ["AI_API_KEY", "GEMINI_API_KEY", "GOOGLE_GENERATIVE_AI_API_KEY"],
   },
   openrouter: {
     id: "openrouter",
     label: "OpenRouter",
     defaultBaseURL: "https://openrouter.ai/api/v1",
-    defaultPrimaryModel: "deepseek/deepseek-chat",
-    defaultFallbackModel: "deepseek/deepseek-chat",
+    defaultPrimaryModel: "openrouter/free",
+    defaultFallbackModel: "openrouter/free",
     envApiKeyNames: ["AI_API_KEY", "OPENROUTER_API_KEY"],
   },
   groq: {
     id: "groq",
     label: "Groq",
     defaultBaseURL: "https://api.groq.com/openai/v1",
-    defaultPrimaryModel: "llama-3.3-70b-versatile",
-    defaultFallbackModel: "llama-3.3-70b-versatile",
+    defaultPrimaryModel: "openai/gpt-oss-120b",
+    defaultFallbackModel: "openai/gpt-oss-120b",
     envApiKeyNames: ["AI_API_KEY", "GROQ_API_KEY"],
   },
   together: {
@@ -53,6 +62,22 @@ export const PROVIDER_PRESETS: Record<KnownProviderId, ProviderPreset> = {
     defaultPrimaryModel: "meta-llama/Llama-3.3-70B-Instruct-Turbo",
     defaultFallbackModel: "meta-llama/Llama-3.3-70B-Instruct-Turbo",
     envApiKeyNames: ["AI_API_KEY", "TOGETHER_API_KEY"],
+  },
+  nvidia: {
+    id: "nvidia",
+    label: "NVIDIA NIM",
+    defaultBaseURL: "https://integrate.api.nvidia.com/v1",
+    defaultPrimaryModel: "nvidia/nemotron-3",
+    defaultFallbackModel: "nvidia/nemotron-3",
+    envApiKeyNames: ["AI_API_KEY", "NVIDIA_API_KEY"],
+  },
+  zai: {
+    id: "zai",
+    label: "Z.ai GLM",
+    defaultBaseURL: "https://api.z.ai/api/paas/v4/",
+    defaultPrimaryModel: "glm-4.7-flash",
+    defaultFallbackModel: "glm-4.7-flash",
+    envApiKeyNames: ["AI_API_KEY", "ZAI_API_KEY"],
   },
   openai: {
     id: "openai",
@@ -89,6 +114,8 @@ function normalizeProviderId(raw?: string): KnownProviderId {
   if (value === "openrouter") return "openrouter";
   if (value === "groq") return "groq";
   if (value === "together" || value === "togetherai") return "together";
+  if (value === "nvidia" || value === "nim" || value === "nvidia-nim") return "nvidia";
+  if (value === "zai" || value === "z.ai" || value === "zhipu" || value === "glm") return "zai";
   if (value === "openai") return "openai";
   return "openai-compatible";
 }

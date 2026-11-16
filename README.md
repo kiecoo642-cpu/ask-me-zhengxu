@@ -30,7 +30,7 @@ npm run dev
 
 | 变量名 | 用途 | 必填 |
 | --- | --- | --- |
-| `AI_PROVIDER` | 模型 Provider 标识（默认 `deepseek`，可选 `gemini` / `openrouter` / `groq` / `together` / `openai` / `openai-compatible`） | 可选 |
+| `AI_PROVIDER` | 模型 Provider 标识（默认 `deepseek`，可选 `gemini` / `openrouter` / `groq` / `together` / `nvidia` / `zai` / `openai` / `openai-compatible`） | 可选 |
 | `AI_BASE_URL` | 自定义 OpenAI-compatible 接口地址（未设置时按 `AI_PROVIDER` 使用预设地址） | 可选 |
 | `AI_API_KEY` | 通用模型 API 服务端密钥（优先读取；未设置时按 Provider 自动回退到 `DEEPSEEK_API_KEY` / `GEMINI_API_KEY` 等，禁止 `NEXT_PUBLIC_`） | 可选（启用模型问答时必填） |
 | `AI_MODEL` | 主生成模型名称（未设置时按 `AI_PROVIDER` 使用默认模型） | 可选 |
@@ -54,10 +54,12 @@ npm run dev
 
 ### 多 Provider 配置示例（仅展示环境变量名，切勿提交真实密钥）
 
-- **Google Gemini（OpenAI-compatible）**：`AI_PROVIDER=gemini`、`AI_BASE_URL=https://generativelanguage.googleapis.com/v1beta/openai/`、`GEMINI_API_KEY=<your-key>`、`AI_MODEL=gemini-3.5-flash`
-- **OpenRouter**：`AI_PROVIDER=openrouter`、`AI_BASE_URL=https://openrouter.ai/api/v1`、`OPENROUTER_API_KEY=<your-key>`、`AI_MODEL=deepseek/deepseek-chat`
-- **Groq**：`AI_PROVIDER=groq`、`AI_BASE_URL=https://api.groq.com/openai/v1`、`GROQ_API_KEY=<your-key>`、`AI_MODEL=llama-3.3-70b-versatile`
+- **Google Gemini（OpenAI-compatible）**：`AI_PROVIDER=gemini`、`AI_BASE_URL=https://generativelanguage.googleapis.com/v1beta/openai/`、`GEMINI_API_KEY=<your-key>`、`AI_MODEL=gemini-4-hydrogen`
+- **OpenRouter**：`AI_PROVIDER=openrouter`、`AI_BASE_URL=https://openrouter.ai/api/v1`、`OPENROUTER_API_KEY=<your-key>`、`AI_MODEL=openrouter/free`
+- **Groq**：`AI_PROVIDER=groq`、`AI_BASE_URL=https://api.groq.com/openai/v1`、`GROQ_API_KEY=<your-key>`、`AI_MODEL=openai/gpt-oss-120b`
 - **Together AI**：`AI_PROVIDER=together`、`AI_BASE_URL=https://api.together.xyz/v1`、`TOGETHER_API_KEY=<your-key>`、`AI_MODEL=meta-llama/Llama-3.3-70B-Instruct-Turbo`
+- **NVIDIA NIM（需用户提供 `nvapi-` 密钥）**：`AI_PROVIDER=nvidia`、`AI_BASE_URL=https://integrate.api.nvidia.com/v1`、`NVIDIA_API_KEY=<your-key>`、`AI_MODEL=nvidia/nemotron-3`
+- **Z.ai GLM（免费 Flash 系列，需用户提供密钥）**：`AI_PROVIDER=zai`、`AI_BASE_URL=https://api.z.ai/api/paas/v4/`、`ZAI_API_KEY=<your-key>`、`AI_MODEL=glm-4.7-flash`
 
 ## 验证命令
 

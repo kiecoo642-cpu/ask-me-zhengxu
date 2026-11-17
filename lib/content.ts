@@ -159,7 +159,7 @@ export const contentCatalogSchema = z.object({
   sources: z.array(sourceSchema).min(1),
   claims: z.array(claimSchema).min(1),
   knowledge: z.array(knowledgeItemSchema).min(1),
-  starStories: z.array(starStorySchema).min(8),
+  starStories: z.array(starStorySchema).min(7),
   faqs: z.array(faqSchema).min(15),
   stableAnswers: z.array(stableAnswerSchema).min(20),
   suggestedQuestions: z.array(z.string().min(1)).min(1),

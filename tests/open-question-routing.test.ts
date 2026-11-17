@@ -167,9 +167,9 @@ test("包含上线字样的假设排查题优先识别为方法题", () => {
 test("简历核心事实题使用精确契约且不误判为 Agent 能力", () => {
   assert.equal(findQuestionContract("你在 aTalent 的 IHG AI 人才匹配项目具体做了什么？")?.id, "A04");
   assert.equal(findQuestionContract("你在 aTalent 的 IHG 人才库 RAG 问答助手具体做了什么？")?.id, "A07");
-  assert.equal(findQuestionContract("模型选型是怎么做出来的？")?.id, "A11");
-  assert.equal(findQuestionContract("你在百川智能的医疗 RAG 项目具体做了什么？")?.id, "A14");
-  assert.equal(findQuestionContract("Claude Jira 提单工具是怎么提效的？")?.id, "A25");
+  assert.equal(findQuestionContract("你在百川智能的医疗 RAG 项目具体做了什么？")?.id, "A09");
+  assert.equal(findQuestionContract("WebDev E2E Bench 端到端评测系统是怎么设计的？")?.id, "A14");
+  assert.equal(findQuestionContract("Claude Jira 提单工具是怎么提效的？")?.id, "A26");
 });
 
 test("转型与新岗位问题均生成非空、相关且事实安全的面试回答", () => {

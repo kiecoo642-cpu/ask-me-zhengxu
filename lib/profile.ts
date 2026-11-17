@@ -11,24 +11,24 @@ export const profile = {
 
 export const featuredProjects = [
   {
-    name: "IHG AI 人才匹配系统（aTalent 实习）",
-    summary: "高管端 App + 智能语音助手双轨采集与向量匹配，覆盖大中华区 500+ 酒店、3000+ 活跃用户，初筛 8h -> 1.5h（85% 采纳率分母待澄清）。",
-    stack: "HR SaaS / 语音助手 / 向量相似度匹配 / MVP",
-    question: "你在 aTalent 的 IHG AI 人才匹配项目具体做了什么？",
+    name: "IHG AI 人才匹配 & 人才库 RAG 助手（aTalent 实习）",
+    summary: "高管端 App + 智能语音助手双轨采集与向量匹配，覆盖 500+ 酒店、3000+ 活跃用户，初筛 8h -> 1.5h（85% 采纳率分母待澄清）；并交付多助手 RAG 问答（5 轮 30 条 QA）。",
+    stack: "HR SaaS / 语音助手 / 向量匹配 / RAG & Rerank",
+    question: "请介绍一下你的 aTalent 实习。",
     status: "已完成 MVP 落地",
   },
   {
-    name: "IHG 人才库 RAG 问答助手 & 模型选型",
-    summary: "向量召回 + Rerank（Top 20 -> Top 5）与 Redis 短期记忆，按岗位配多助手并完成 5 轮 30 条内部 QA；基于 L1–L4 分层给出分场景模型选型矩阵。",
-    stack: "RAG / Rerank / Redis / L1–L4 模型选型",
-    question: "你在 aTalent 的 IHG 人才库 RAG 问答助手具体做了什么？",
-    status: "5 轮内部 QA & 选型矩阵已审批",
+    name: "百川智能医疗 RAG 知识助手（百川智能实习）",
+    summary: "面向 10+ 医疗客户构建四层架构与 Dense+Rerank 溯源检索、Redis 多助手短期记忆，并搭建四维自动化评测（3 轮 30 次、单跳 9.71 vs 多跳 4.38 风险信号）。",
+    stack: "医疗 RAG / 四层架构 / 四维自动化评测 / Bad Case 归因",
+    question: "请介绍一下你的百川智能实习。",
+    status: "完成评测闭环与风险定位",
   },
   {
-    name: "百川智能医疗 RAG & 独立评测设计",
-    summary: "负责百川医疗 RAG 评测模块（3 轮 30 次共用数据，多跳 4.38 风险信号），并完成 Seedance 视频六维评测、千问渠道调研（30 条资料库）。",
-    stack: "医疗 RAG 评测 / 多跳归因 / Seedance / DRACO 渠道调研",
-    question: "你在百川智能的医疗 RAG 项目具体做了什么？",
-    status: "评测模块与方案设计完成",
+    name: "WebDev E2E Bench 端到端评测系统",
+    summary: "调研 13 项 Benchmark，构建 6 类任务七维 3 Gate 体系，完成 6 模型 36 次 Pilot 与 18 份盲评校准（Gold 6/6、Spearman 0.6191），协议诊断推动复杂样本 16.04 -> 69.07。",
+    stack: "E2E Benchmark / 七维 Gate / 盲评校准 / 协议诊断 A/B",
+    question: "WebDev E2E Bench 端到端评测系统是怎么设计的？",
+    status: "完成盲评校准与 A/B 诊断",
   },
 ] as const;

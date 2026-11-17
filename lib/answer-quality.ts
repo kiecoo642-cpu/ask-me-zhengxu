@@ -25,14 +25,11 @@ const RAW_FIELD_PHRASES = [
 ];
 
 const TOPIC_TERMS: Partial<Record<AnswerPlan["topic"], string[]>> = {
-  rag: ["RAG", "Rerank", "Redis", "多助手", "多跳", "5 轮", "30 条"],
-  model_selection: ["选型", "L1", "L4", "GPT-4o", "Haiku", "BGE", "M3E"],
-  baichuan_rag: ["百川", "医疗 RAG", "多跳", "4.38", "9.71", "3 轮", "30 次"],
-  talentmatch: ["TalentMatch", "66 次", "220k", "Pilot", "盲评"],
-  seedance_eval: ["Seedance", "视频", "六维", "120 条", "24 条"],
-  qwen_channel: ["千问", "DRACO", "渠道", "30 条"],
+  rag: ["IHG 人才库", "5 轮", "30 条", "房务", "GM"],
+  baichuan_rag: ["百川", "医疗 RAG", "4.38", "9.71", "3 轮", "30 次", "20,000+"],
+  webdev_bench: ["WebDev", "E2E Bench", "16.04", "69.07", "36 次", "18 份盲评", "71.4%", "73.3%"],
   atalent: ["aTalent", "IHG", "洲际", "春风动力", "惠灵顿", "语音助手", "向量匹配"],
-  jira_tool: ["Jira", "Claude", "提单", "自述未验证"],
+  jira_tool: ["Jira", "Claude", "提单", "自述未验证", "-0.15"],
   education: ["东华大学", "信息管理与信息系统", "3.6", "前 10%"],
 };
 
@@ -60,7 +57,7 @@ const RISKY_CLAIMS = [
   "容诚",
 ];
 
-const KNOWN_ORGANIZATIONS = ["东华大学", "aTalent", "IHG", "洲际酒店集团", "春风动力", "惠灵顿国际学校"];
+const KNOWN_ORGANIZATIONS = ["东华大学", "aTalent", "IHG", "洲际酒店集团", "春风动力", "惠灵顿国际学校", "百川智能"];
 
 const NUMBER_PATTERN = /\d+(?:\.\d+)?(?:%|％|万|亿|倍|个|人|次|天|小时|分钟|条|项|分)?/g;
 const EVENT_SIGNAL = /(?:我|本人).{0,12}(?:负责|主导|参与|完成|推动|组织|协调|交付|上线|服务|访谈|调研|获得|实现|搭建|开发|经历|遇到|发现|验证过|尝试过)|(?:已|已经).{0,12}(?:上线|交付|落地|服务|完成)|(?:用户|客户).{0,12}(?:反馈|认可|满意|使用)|(?:提升|降低|增长|节省|改善)/;

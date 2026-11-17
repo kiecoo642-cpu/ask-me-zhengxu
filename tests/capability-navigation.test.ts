@@ -16,12 +16,12 @@ test("侧栏能力索引提供三组招聘方可理解的能力证据", () => {
 });
 
 test("评测与原型能力只使用现有材料可支持的表述", () => {
-  const evalPillar = capabilityNavigation.find(({ title }) => title.includes("RAG 评测"));
+  const evalPillar = capabilityNavigation.find(({ title }) => title.includes("端到端评测"));
   assert.ok(evalPillar);
 
   const evidence = evalPillar.items.join(" ");
-  assert.match(evidence, /RAG/);
-  assert.match(evidence, /L1–L4|选型矩阵/);
-  assert.match(evidence, /百川|Seedance|千问/);
-  assert.doesNotMatch(evidence, /DeepFlow|71\.4%|16\.04|69\.07|56%|88%/);
+  assert.match(evidence, /百川/);
+  assert.match(evidence, /WebDev|盲评/);
+  assert.match(evidence, /16\.04|69\.07/);
+  assert.doesNotMatch(evidence, /DeepFlow|56%|88%/);
 });

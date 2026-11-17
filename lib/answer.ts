@@ -137,7 +137,7 @@ function careerTransitionFacts() {
     candidateNarrative.careerTransition.thesis,
     candidateNarrative.careerTransition.continuity,
     candidateNarrative.careerTransition.motivation,
-    candidateNarrative.capabilityEvidence.find((item) => item.id === "eval_rigor")?.evidence ?? "",
+    candidateNarrative.capabilityEvidence.find((item) => item.id === "bench_protocol")?.evidence ?? "",
   ].filter(Boolean);
 }
 

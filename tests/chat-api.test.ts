@@ -159,7 +159,7 @@ test("稳定回答的常见问法不会被模型规划器改写路由", async ()
   const questions = [
     "为什么说 IHG 85% 业务采纳率的分母口径待澄清？",
     "你在 aTalent 的 IHG 人才库 RAG 问答助手具体做了什么？",
-    "模型选型是怎么做出来的？",
+    "WebDev E2E Bench 端到端评测系统是怎么设计的？",
   ];
   for (const [index, question] of questions.entries()) {
     const responseEvents = await events(await POST(request({
@@ -358,7 +358,7 @@ test("自我介绍返回完整、可核验的郑栩信息", async () => {
   assert.match(answer, /东华大学/);
   assert.match(answer, /aTalent|IHG/);
   assert.doesNotMatch(answer, /证据边界|需要面试核实|\[S\d+\]/);
-  assert.doesNotMatch(answer, /东北大学|张倬玮|71\.4%|16\.04|69\.07/);
+  assert.doesNotMatch(answer, /东北大学|张倬玮|百度实习|德勤/);
 });
 
 test("模型上游过载和超时仍返回可见兜底回答", async () => {
@@ -447,7 +447,7 @@ test("事实敏感开放题由 Flash 生成并经 Pro 强制审校", async () =>
   globalThis.fetch = async () => {
     calls += 1;
     if (calls === 1) return deepSeekStream("我在 aTalent 实习中负责企业 AI 方案与落地推进，具体内容以公开事实为准。", 100);
-    const question = "你在千问办公渠道调研中主要负责哪些拆解工作？";
+    const question = "你在 WebDev E2E Bench 的 Pilot 阶段主要负责哪些拆解工作？";
     const frame = buildLocalQuestionFrame(question);
     const items = retrieveKnowledge(question, { history: [], limit: 4, frame });
     const revised = buildAnswerPlan(question, items, undefined, [], frame).fallbackAnswer;
@@ -456,13 +456,13 @@ test("事实敏感开放题由 Flash 生成并经 Pro 强制审校", async () =>
 
   const responseEvents = await events(await POST(request({
     sessionId: "api-pro-repair",
-    messages: [{ role: "user", content: "你在千问办公渠道调研中主要负责哪些拆解工作？" }],
+    messages: [{ role: "user", content: "你在 WebDev E2E Bench 的 Pilot 阶段主要负责哪些拆解工作？" }],
   })));
   const answer = responseEvents.filter((event) => event.type === "delta").map((event) => event.content).join("");
   assert.equal(calls, 2);
   assert.equal(responseEvents.at(-1)?.modelPath, "pro");
   assert.equal(responseEvents.at(-1)?.degraded, false);
-  assert.match(answer, /千问|渠道|Draco/);
+  assert.match(answer, /WebDev|Pilot|盲评/);
 });
 
 test("开放题双模型失败时显示服务不可用而不冒充成功", async () => {

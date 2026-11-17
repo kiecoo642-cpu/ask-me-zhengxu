@@ -78,19 +78,19 @@ test("稳定回答由回答卡自然说明完成边界，不追加机械尾注",
 test("招聘高频表达稳定匹配对应面试回答", () => {
   assert.equal(matchStableAnswer("你为什么适合产品经理岗位？")?.id, "A02");
   assert.equal(matchStableAnswer("你在 aTalent 的 IHG AI 人才匹配项目具体做了什么？")?.id, "A04");
-  assert.equal(matchStableAnswer("为什么说 IHG 85% 业务采纳率的分母口径待澄清？")?.id, "A05");
+  assert.equal(matchStableAnswer("为什么说 IHG 85% 业务采纳率的分母口径待澄清？")?.id, "A08");
   assert.equal(matchStableAnswer("你在 aTalent 的 IHG 人才库 RAG 问答助手具体做了什么？")?.id, "A07");
-  assert.equal(matchStableAnswer("模型选型是怎么做出来的？")?.id, "A11");
-  assert.equal(matchStableAnswer("你在百川智能的医疗 RAG 项目具体做了什么？")?.id, "A14");
-  assert.equal(matchStableAnswer("Claude Jira 提单工具是怎么提效的？")?.id, "A25");
-  assert.equal(matchStableAnswer("你在东华大学的教育背景和可到岗时间是什么？")?.id, "A27");
+  assert.equal(matchStableAnswer("你在百川智能的医疗 RAG 项目具体做了什么？")?.id, "A09");
+  assert.equal(matchStableAnswer("WebDev E2E Bench 端到端评测系统是怎么设计的？")?.id, "A14");
+  assert.equal(matchStableAnswer("Claude Jira 提单工具是怎么提效的？")?.id, "A26");
+  assert.equal(matchStableAnswer("你在东华大学的教育背景和可到岗时间是什么？")?.id, "A20");
 });
 
 test("只有被问到短板或边界时，回退回答才自然补充限制", () => {
-  const normal = demoAnswer("介绍一下 TalentMatch 简历初筛评测", retrieveKnowledge("介绍一下 TalentMatch 简历初筛评测"));
-  const boundary = demoAnswer("TalentMatch 简历初筛评测还有哪些不足？", retrieveKnowledge("TalentMatch 简历初筛评测还有哪些不足？"));
+  const normal = demoAnswer("介绍一下 Claude Jira 提单工具", retrieveKnowledge("介绍一下 Claude Jira 提单工具"));
+  const boundary = demoAnswer("Claude Jira 提单工具还有哪些不足？", retrieveKnowledge("Claude Jira 提单工具还有哪些不足？"));
   assert.doesNotMatch(normal, /\*\*当前阶段\*\*/);
-  assert.match(boundary, /\*\*当前阶段\*\*/);
+  assert.match(boundary, /\*\*(?:当前阶段|现实边界)\*\*/);
 });
 
 test("项目挑战类问题自动调用对应公开 STAR 故事", () => {
@@ -105,7 +105,7 @@ test("项目挑战类问题自动调用对应公开 STAR 故事", () => {
 
 test("项目别名只用于检索，不会把所有 RAG 追问误配成代表项目标准答案", () => {
   assert.equal(matchStableAnswer("IHG RAG 助手里 Redis 短期记忆和 Rerank 降级有什么作用？"), undefined);
-  assert.equal(retrieveKnowledge("IHG RAG 助手里 Redis 短期记忆和 Rerank 降级有什么作用？")[0]?.id, "K5");
+  assert.equal(retrieveKnowledge("IHG RAG 助手里 Redis 短期记忆和 Rerank 降级有什么作用？")[0]?.id, "K6");
 });
 
 test("省略项目名的贡献追问沿用最近项目，不误答成其他项目", () => {
@@ -142,7 +142,7 @@ test("多轮回答计划识别已讲内容并要求补充新信息", () => {
 });
 
 test("自然语言改写仍能召回正确经历", () => {
-  assert.equal(retrieveKnowledge("他在 aTalent 服务的春风动力和惠灵顿国际学校做了什么？")[0]?.id, "K13");
+  assert.equal(retrieveKnowledge("他在 aTalent 服务的春风动力和惠灵顿国际学校做了什么？")[0]?.id, "K5");
   assert.equal(retrieveKnowledge("他在东华大学的专业、GPA 和到岗时间是什么？")[0]?.id, "K3");
 });
 
@@ -185,7 +185,6 @@ test("联系方式与旧候选人信息不进入模型知识库", () => {
   assert.equal(context.includes("东北大学"), false);
   assert.equal(context.includes("zackzhang124@163.com"), false);
   assert.equal(context.includes("15812106204"), false);
-  assert.equal(context.includes("71.4%"), false);
 });
 
 test("确认的东华大学与 aTalent 经历进入公开知识库且无未确认占位", () => {

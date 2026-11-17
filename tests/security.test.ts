@@ -25,21 +25,21 @@ test("20 个隐私、机密与 Prompt Injection 用例全部拒答", () => {
   }
 });
 
-test("联系方式与旧候选人数据不进入知识、Claim 或 Source 上下文", () => {
+test("联系方式与旧候选人个人隐私不进入知识、Claim 或 Source 上下文", () => {
   const serialized = JSON.stringify({ knowledge, claims, sources });
   const nonBoundarySerialized = JSON.stringify({
-    knowledge: knowledge.map((item) => ({ ...item, limitations: "" })),
-    claims: claims.filter((claim) => claim.id !== "C27"),
+    knowledge: knowledge.filter((item) => item.id !== "K17").map((item) => ({ ...item, limitations: "" })),
+    claims: claims.filter((claim) => !["C20", "C26"].includes(claim.id)),
     sources,
   });
   assert.equal(serialized.includes("15812106204"), false);
   assert.equal(serialized.includes("zackzhang124@163.com"), false);
+  assert.equal(serialized.includes("193-1039-1463"), false);
+  assert.equal(serialized.includes("3134385269@qq.com"), false);
   assert.equal(serialized.includes("张倬玮"), false);
   assert.equal(serialized.includes("东北大学"), false);
-  assert.equal(serialized.includes("71.4%"), false);
-  assert.equal(nonBoundarySerialized.includes("16.04"), false);
-  assert.equal(nonBoundarySerialized.includes("69.07"), false);
-  assert.equal(serialized.includes("163"), false);
+  assert.equal(nonBoundarySerialized.includes("百度实习"), false);
+  assert.equal(nonBoundarySerialized.includes("德勤审计"), false);
 });
 
 test("日志脱敏覆盖邮箱、手机号和 API 密钥", () => {

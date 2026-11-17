@@ -1,20 +1,20 @@
 export const capabilityNavigation = [
   {
     title: "企业级 HR SaaS 与 AI 落地",
-    summary: "aTalent 8 个月实习，推动 IHG 人才匹配 MVP 与多行业绩效方案",
-    question: "你在 aTalent 的 IHG AI 人才匹配项目具体做了什么？",
-    items: ["IHG 500+ 酒店 / 3000+ 活跃用户", "高管端 App + 智能语音助手", "春风动力 & 惠灵顿国际学校"],
+    summary: "aTalent 实习：IHG 人才匹配 MVP、多行业复用与人才库 RAG 问答助手",
+    question: "请介绍一下你的 aTalent 实习。",
+    items: ["IHG 500+ 酒店 / 3000+ 活跃用户", "高管端 App + 智能语音助手", "IHG 人才库 RAG（5 轮 30 条）"],
   },
   {
-    title: "RAG 评测、选型与独立设计",
-    summary: "覆盖 IHG RAG、模型选型矩阵、百川医疗 RAG 评测与 Seedance/千问调研",
-    question: "模型选型是怎么做出来的？",
-    items: ["IHG RAG 5 轮 30 条与 Rerank", "L1–L4 分场景模型选型矩阵", "百川医疗 RAG 评测 & Seedance/千问"],
+    title: "医疗 RAG 架构与端到端评测",
+    summary: "百川智能医疗 RAG 知识助手，以及 WebDev E2E Bench 七维 Gate 与盲评校准",
+    question: "WebDev E2E Bench 端到端评测系统是怎么设计的？",
+    items: ["百川医疗 RAG（四层架构 & 四维评测）", "WebDev 36 次 Pilot & 18 份盲评", "写入协议 A/B：16.04 → 69.07"],
   },
   {
-    title: "产品原型、数据与到岗",
-    summary: "SQL、PRD/Figma、飞书与效率工具，1 周内可到岗",
-    question: "你在东华大学的教育背景和可到岗时间是什么？",
-    items: ["东华大学信管（GPA 3.6 / 前 10%）", "Claude Jira 工具（自述未验证）", "每周 5 天 / 连续 6 个月 / 1 周到岗"],
+    title: "可信 Agent、数据与到岗",
+    summary: "Ask Me（106 项测试）、SQL/Python 实践与 1 周内可到岗",
+    question: "他的教育背景、课程与可到岗时间是什么？",
+    items: ["东华大学信管（GPA 3.6 / 前 10%）", "Ask Me（106 项测试 & 48 次模拟）", "每周 5 天 / 连续 6 个月 / 1 周到岗"],
   },
 ] as const;

@@ -12,14 +12,14 @@ import {
 import { getFollowUpQuestions, recommendationQuestionCandidates } from "../lib/question-suggestions.ts";
 
 const zhengXuCases = [
-  { question: "你在 aTalent 的 IHG AI 人才匹配项目具体做了什么？", contractId: "A04", topic: "atalent", facet: "contribution", requiredIds: ["K4", "K13", "K14"], forbidden: /东北大学|DeepFlow|德勤/ },
-  { question: "为什么说 IHG 85% 业务采纳率的分母口径待澄清？", contractId: "A05", topic: "atalent", facet: "boundary", requiredIds: ["K4", "K13", "K14"], forbidden: /东北大学|DeepFlow/ },
-  { question: "你在 aTalent 的 IHG 人才库 RAG 问答助手具体做了什么？", contractId: "A07", topic: "rag", facet: "contribution", requiredIds: ["K5", "K7", "K14"], forbidden: /东北大学|DeepFlow/ },
-  { question: "模型选型是怎么做出来的？", contractId: "A11", topic: "model_selection", facet: "method", requiredIds: ["K6", "K14"], forbidden: /东北大学|DeepFlow/ },
-  { question: "你在百川智能的医疗 RAG 项目具体做了什么？", contractId: "A14", topic: "baichuan_rag", facet: "contribution", requiredIds: ["K7", "K14"], forbidden: /东北大学|DeepFlow/ },
-  { question: "Claude Jira 提单工具是怎么提效的？", contractId: "A25", topic: "jira_tool", facet: "method", requiredIds: ["K12", "K14"], forbidden: /东北大学|DeepFlow/ },
-  { question: "你在东华大学的教育背景和可到岗时间是什么？", contractId: "A27", topic: "education", facet: "overview", requiredIds: ["K3", "K1"], forbidden: /东北大学|DeepFlow/ },
-  { question: "Ask-Me 是怎么保证不编造事实的？", contractId: "A20", topic: "ask_me", facet: "method", requiredIds: ["K9", "K14"], forbidden: /东北大学|DeepFlow/ },
+  { question: "请介绍一下你的 aTalent 实习。", contractId: "A04", topic: "atalent", facet: "contribution", requiredIds: ["K4", "K5", "K16", "K17"], forbidden: /东北大学|DeepFlow|德勤/ },
+  { question: "为什么说 IHG 85% 业务采纳率的分母口径待澄清？", contractId: "A08", topic: "atalent", facet: "boundary", requiredIds: ["K4", "K5", "K16", "K17"], forbidden: /东北大学|DeepFlow/ },
+  { question: "你在 aTalent 的 IHG 人才库 RAG 问答助手具体做了什么？", contractId: "A07", topic: "rag", facet: "contribution", requiredIds: ["K6", "K8", "K17"], forbidden: /东北大学|DeepFlow/ },
+  { question: "请介绍一下你的百川智能实习。", contractId: "A09", topic: "baichuan_rag", facet: "contribution", requiredIds: ["K7", "K8", "K9", "K17"], forbidden: /东北大学|DeepFlow/ },
+  { question: "WebDev E2E Bench 端到端评测系统是怎么设计的？", contractId: "A14", topic: "webdev_bench", facet: "method", requiredIds: ["K10", "K11", "K12", "K13"], forbidden: /东北大学|DeepFlow/ },
+  { question: "Claude Jira 提单工具是怎么提效的？", contractId: "A26", topic: "jira_tool", facet: "method", requiredIds: ["K15", "K17"], forbidden: /东北大学|DeepFlow/ },
+  { question: "他的教育背景、课程与可到岗时间是什么？", contractId: "A20", topic: "education", facet: "overview", requiredIds: ["K3", "K1"], forbidden: /东北大学|DeepFlow/ },
+  { question: "Ask Me 是怎么设计和保证不编造事实的？", contractId: "A19", topic: "ask_me", facet: "method", requiredIds: ["K14", "K17"], forbidden: /东北大学|DeepFlow/ },
 ] as const;
 
 test("推荐候选全部拥有可执行的问题契约", () => {

@@ -11,14 +11,14 @@ test("IHG 85% 业务采纳率口径显式标明分母待澄清", () => {
   assert.ok(answer && ihg && source && claim5);
   assert.match(answer.standardAnswer, /85%/);
   assert.match(answer.standardAnswer, /分母|口径/);
-  assert.match(claim5.statement, /分母口径待.*澄清/);
+  assert.match(claim5.limitations, /分母口径.*待.*澄清/);
   assert.equal(ihg.projectStatus, "completed");
   assert.equal(source.projectStatus, "completed");
 });
 
 test("IHG RAG 回答区分 5 轮 30 条内部 QA 与非客户验收边界", () => {
   const answer = matchStableAnswer("你在 aTalent 的 IHG 人才库 RAG 问答助手具体做了什么？");
-  const rag = knowledge.find((item) => item.id === "K5");
+  const rag = knowledge.find((item) => item.id === "K6");
   const source = sources.find((item) => item.id === "S2");
   assert.ok(answer && rag && source);
   assert.match(answer.standardAnswer, /5 轮|30 条/);

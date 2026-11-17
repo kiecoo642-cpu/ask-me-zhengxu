@@ -254,13 +254,13 @@ function intentFromFrame(frame: QuestionFrame, detected: AnswerIntent): AnswerIn
   if (frame.facet === "fit") return "role_fit";
   if (frame.facet === "evaluation") return "skills";
   if (frame.facet === "example" || (frame.facet === "transfer" && ["education", "atalent", "profile"].includes(frame.topic))) return "experience_value";
-  if (frame.facet !== "transfer" && (frame.topic === "atalent" || frame.topic === "agent_sandbox" || frame.topic === "rag_eval" || frame.topic === "ask_me")) return "representative_project";
+  if (frame.facet !== "transfer" && (frame.topic === "atalent" || frame.topic === "rag" || frame.topic === "ask_me")) return "representative_project";
   return detected;
 }
 
 function detailLevelFor(question: string, intent: AnswerIntent, frame: QuestionFrame, depth: ConversationDepth): AnswerDetailLevel {
   if (frame.questionMode === "agent_meta" || ["education", "credentials", "privacy"].includes(intent)) return "concise";
-  if (/技术栈|采用了什么技术|使用哪些工具/i.test(question)) return "standard";
+  if (/技术栈|采用了什么技术|使用哪些工具|L1[—–-]L4|分别是什么/i.test(question)) return "standard";
   if (depth !== "deep_dive" && /如何(?:评估|验证|拆解)|怎么看(?:待)?企业级?\s*AI|会如何拆解/i.test(question)) return "standard";
   if (/为什么应该录用|为什么要录用|为什么推荐|录用你的理由/.test(question)) return "deep";
   if (depth === "deep_dive" || [

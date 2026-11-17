@@ -30,8 +30,7 @@ function usesRecentContext(question: string, history: ChatMessage[]) {
 function isPublicActive(item: { visibility: string; status: string; verification: string; projectStatus?: string }) {
   return item.visibility === "public"
     && item.status === "active"
-    && item.verification !== "unverified"
-    && item.projectStatus !== "archived";
+    && item.verification !== "unverified";
 }
 
 function isRetrievable(item: KnowledgeItem) {
@@ -72,7 +71,12 @@ export function resolveRetrievalQuery(question: string, history: ChatMessage[] =
   const base = `${question} ${recentContext}`;
   const normalized = normalizeSearchText(base);
   const matchedProjects = Object.entries(contentCatalog.aliases)
-    .filter(([, aliases]) => aliases.some((alias) => normalized.includes(normalizeSearchText(alias))))
+    .filter(([, aliases]) => aliases.some((alias) => {
+      if (/^[a-z0-9]+$/i.test(alias) && alias.length <= 3) {
+        return new RegExp(`\\b${alias}\\b`, "i").test(base);
+      }
+      return normalized.includes(normalizeSearchText(alias));
+    }))
     .map(([project]) => project);
   return {
     text: base.trim(),
@@ -135,6 +139,13 @@ export function matchStableAnswer(question: string, history: ChatMessage[] = [],
   const normalizedQuestion = normalizeSearchText(question);
   const resolved = resolveRetrievalQuery(question, history);
   const effectiveFrame = frame ?? buildLocalQuestionFrame(question, history);
+  if (
+    effectiveFrame.topic === "unknown"
+    && effectiveFrame.answerIntent === "general"
+    && !stableAnswers.some((item) => normalizeSearchText(item.question) === normalizedQuestion)
+  ) {
+    return undefined;
+  }
   const usesReference = usesRecentContext(question, history);
   const asksForOutcomeEvidence = effectiveFrame.answerIntent === "result"
     && /用户测试|满意度|用户规模|真实用户|增长|留存|生产状态|商业化|变现|营收|收入|结果数据|量化结果/.test(question);
@@ -150,14 +161,17 @@ export function matchStableAnswer(question: string, history: ChatMessage[] = [],
       if (item.matchRequiresProjectContext && !effectiveFrame.activeProject && !(item.relatedProject && resolved.matchedProjects.includes(item.relatedProject))) {
         return { item, score: 0, hasAnswerMatch: false };
       }
-      if (resolved.matchedProjects.length > 1 && item.relatedProject) return { item, score: 0, hasAnswerMatch: false };
+      const exact = normalizeSearchText(item.question) === normalizedQuestion ? 100 : 0;
+      if (resolved.matchedProjects.length > 1 && !effectiveFrame.activeProject && !exact && item.relatedProject) return { item, score: 0, hasAnswerMatch: false };
       if (effectiveFrame.activeProject && item.relatedProject && item.relatedProject !== effectiveFrame.activeProject) return { item, score: 0, hasAnswerMatch: false };
-      if (item.id === "A02" && effectiveFrame.targetRole && !/^AI\s*产品经理$/i.test(effectiveFrame.targetRole)) {
+      if (item.id === "A02" && effectiveFrame.targetRole && !/^(?:AI\s*)?产品经理$/i.test(effectiveFrame.targetRole)) {
         return { item, score: 0, hasAnswerMatch: false };
       }
       if (usesReference && item.relatedProject && !resolved.matchedProjects.includes(item.relatedProject)) return { item, score: 0 };
-      const exact = normalizeSearchText(item.question) === normalizedQuestion ? 100 : 0;
       if (!exact && effectiveFrame.routeSource !== "contract" && effectiveFrame.answerIntent !== "general" && !compatibleIntents.has(item.factSkeleton.intent)) {
+        return { item, score: 0, hasAnswerMatch: false };
+      }
+      if (!exact && item.factSkeleton.intent === "project_overview" && ["method", "architecture", "evaluation", "boundary"].includes(effectiveFrame.facet)) {
         return { item, score: 0, hasAnswerMatch: false };
       }
       const keywordScore = item.matchKeywords.reduce((score, keyword) => {
@@ -165,7 +179,7 @@ export function matchStableAnswer(question: string, history: ChatMessage[] = [],
         return score + (normalizedQuestion.includes(normalizedKeyword) ? Math.max(4, normalizedKeyword.length * 2) : 0);
       }, 0);
       const projectScore = item.relatedProject && resolved.matchedProjects.includes(item.relatedProject) ? 20 : 0;
-      const outcomeEvidenceScore = item.id === "A19" && asksForOutcomeEvidence ? 80 : 0;
+      const outcomeEvidenceScore = item.id === "A28" && asksForOutcomeEvidence ? 80 : 0;
       return { item, score: exact + keywordScore + projectScore + outcomeEvidenceScore, hasAnswerMatch: exact > 0 || keywordScore >= 4 || outcomeEvidenceScore > 0 };
     })
     .filter(({ hasAnswerMatch }) => hasAnswerMatch)

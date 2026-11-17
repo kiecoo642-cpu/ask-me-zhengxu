@@ -6,12 +6,12 @@ import { retrieveKnowledge } from "../lib/knowledge.ts";
 test("多轮面试上下文显式记录当前项目、已问维度与已用证据", () => {
   const history = [
     { role: "user" as const, content: "介绍一下你的 RAG 项目。" },
-    { role: "assistant" as const, content: "中文帮助文档 RAG 评测覆盖 45 篇文档与 30 条带证据句评测集，对比 9 组配置。" },
+    { role: "assistant" as const, content: "IHG 人才库 RAG 问答助手使用向量召回加 Rerank，并做了 5 轮 30 条内部 QA。" },
   ];
   const items = retrieveKnowledge("这个项目中你具体负责了什么？", { history });
   const plan = buildAnswerPlan("这个项目中你具体负责了什么？", items, undefined, history);
 
-  assert.equal(plan.conversationContext.activeProject, "rag-retrieval-eval");
+  assert.equal(plan.conversationContext.activeProject, "atalent-rag");
   assert.equal(plan.conversationContext.depth, "follow_up");
   assert.ok(plan.conversationContext.askedDimensions.includes("overview"));
   assert.ok(plan.brief.primaryEvidenceId);
@@ -38,7 +38,7 @@ test("回答厚度根据题型自适应而不是统一拉长", () => {
   ];
   const standardQuestions = [
     "介绍一下 RAG 项目。", "你如何使用 AI 编程工具？",
-    "Claude Jira 工单工具是如何提效的？", "你掌握哪些产品原型与协作工具？",
+    "Claude Jira 提单工具是怎么提效的？", "L1–L4 分别是什么？",
   ];
   const deepQuestions = [
     "你为什么适合 AI 产品经理岗位？", "哪个项目最能代表你的 AI 产品能力？",

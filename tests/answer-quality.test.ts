@@ -58,8 +58,8 @@ test("结构化事实骨架回退使用郑栩真实项目且不包含内部标�
 });
 
 test("质量门禁要求模型覆盖事实骨架中的必答语义", () => {
-  const repeated = `${plan.thesis}\n\n**项目定位**：${plan.thesis}\n\n**岗位价值**：${plan.thesis}\n\n${plan.thesis}`;
-  const result = validateAnswer(repeated, plan);
+  const incomplete = "我参与过相关项目。\n\n**项目定位**：做过企业级 AI 落地。\n\n**岗位价值**：有一定产品经验。";
+  const result = validateAnswer(incomplete, plan);
   assert.equal(result.passed, false);
   assert.equal(result.triggers.some((item) => item.startsWith("missing_required:")), true);
 });
@@ -97,7 +97,7 @@ test("回答重点会被安全解析为粗体片段", () => {
 });
 
 test("质量门禁拒绝过度加粗和整句加粗", () => {
-  const overformatted = `${plan.fallbackAnswer}\n\n**额外重点一**、**额外重点二**、**额外重点三**。`;
+  const overformatted = `${plan.fallbackAnswer}\n\n**额外重点一**、**额外重点二**、**额外重点三**、**额外重点四**。`;
   assert.equal(validateAnswer(overformatted, plan).triggers.includes("excessive_emphasis"), true);
 });
 
@@ -119,8 +119,12 @@ test("假设题的方法表达不被误判为未记录事件", () => {
 });
 
 test("长篇契约回答至少保留两个阅读重点", () => {
-  const stripped = plan.fallbackAnswer.replace(/\*\*([^*]+)\*\*/g, "$1");
-  assert.equal(validateAnswer(stripped, plan).triggers.includes("insufficient_emphasis"), true);
+  const longQuestion = "请介绍一下你自己。";
+  const longStable = matchStableAnswer(longQuestion);
+  assert.ok(longStable);
+  const longPlan = buildAnswerPlan(longQuestion, retrieveKnowledge(longQuestion), longStable);
+  const stripped = longPlan.fallbackAnswer.replace(/\*\*([^*]+)\*\*/g, "$1");
+  assert.equal(validateAnswer(stripped, longPlan).triggers.includes("insufficient_emphasis"), true);
 });
 
 test("回答长度按问题弹性组织而不是机械卡字数", () => {

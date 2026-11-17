@@ -12,13 +12,14 @@ import {
 import { getFollowUpQuestions, recommendationQuestionCandidates } from "../lib/question-suggestions.ts";
 
 const zhengXuCases = [
-  { question: "你在 aTalent 的 IHG AI 人才匹配项目具体做了什么？", contractId: "A04", topic: "atalent", facet: "contribution", requiredIds: ["K4", "K5", "K11"], forbidden: /东北大学|DeepFlow|百川/ },
-  { question: "为什么说 IHG 85% 业务采纳率的分母口径待澄清？", contractId: "A05", topic: "atalent", facet: "boundary", requiredIds: ["K4", "K5", "K11"], forbidden: /东北大学|DeepFlow/ },
-  { question: "电商 Agent 评测沙箱是如何把完成率从 56% 提升到 88% 的？", contractId: "A07", topic: "agent_sandbox", facet: "evaluation", requiredIds: ["K6", "K11"], forbidden: /东北大学|DeepFlow/ },
-  { question: "中文帮助文档 RAG 评测有哪些关键发现和短板？", contractId: "A09", topic: "rag_eval", facet: "evaluation", requiredIds: ["K7", "K11"], forbidden: /东北大学|DeepFlow/ },
-  { question: "Claude Jira 工单工具是如何提效的？", contractId: "A12", topic: "jira_tool", facet: "overview", requiredIds: ["K8", "K9"], forbidden: /东北大学|DeepFlow/ },
-  { question: "你在东华大学的教育背景和可到岗时间是什么？", contractId: "A14", topic: "education", facet: "overview", requiredIds: ["K3", "K1"], forbidden: /东北大学|DeepFlow/ },
-  { question: "Ask Me 郑栩版数字分身是如何保证不编造事实的？", contractId: "A18", topic: "ask_me", facet: "overview", requiredIds: ["K10", "K11"], forbidden: /东北大学|DeepFlow/ },
+  { question: "你在 aTalent 的 IHG AI 人才匹配项目具体做了什么？", contractId: "A04", topic: "atalent", facet: "contribution", requiredIds: ["K4", "K13", "K14"], forbidden: /东北大学|DeepFlow|德勤/ },
+  { question: "为什么说 IHG 85% 业务采纳率的分母口径待澄清？", contractId: "A05", topic: "atalent", facet: "boundary", requiredIds: ["K4", "K13", "K14"], forbidden: /东北大学|DeepFlow/ },
+  { question: "你在 aTalent 的 IHG 人才库 RAG 问答助手具体做了什么？", contractId: "A07", topic: "rag", facet: "contribution", requiredIds: ["K5", "K7", "K14"], forbidden: /东北大学|DeepFlow/ },
+  { question: "模型选型是怎么做出来的？", contractId: "A11", topic: "model_selection", facet: "method", requiredIds: ["K6", "K14"], forbidden: /东北大学|DeepFlow/ },
+  { question: "你在百川智能的医疗 RAG 项目具体做了什么？", contractId: "A14", topic: "baichuan_rag", facet: "contribution", requiredIds: ["K7", "K14"], forbidden: /东北大学|DeepFlow/ },
+  { question: "Claude Jira 提单工具是怎么提效的？", contractId: "A25", topic: "jira_tool", facet: "method", requiredIds: ["K12", "K14"], forbidden: /东北大学|DeepFlow/ },
+  { question: "你在东华大学的教育背景和可到岗时间是什么？", contractId: "A27", topic: "education", facet: "overview", requiredIds: ["K3", "K1"], forbidden: /东北大学|DeepFlow/ },
+  { question: "Ask-Me 是怎么保证不编造事实的？", contractId: "A20", topic: "ask_me", facet: "method", requiredIds: ["K9", "K14"], forbidden: /东北大学|DeepFlow/ },
 ] as const;
 
 test("推荐候选全部拥有可执行的问题契约", () => {
@@ -52,7 +53,7 @@ test("核心专属兜底直接回答且不泄漏无关主题", () => {
 
 test("长尾问题通过本地 Frame 限定主题，未知题保留规划入口", () => {
   const routed = buildLocalQuestionFrame("RAG 的引用质量出了问题时，你会先检查哪里？");
-  assert.equal(routed.topic, "rag_eval");
+  assert.equal(routed.topic, "rag");
   assert.equal(routed.facet, "evaluation");
   assert.equal(routed.confidence >= 0.8, true);
 

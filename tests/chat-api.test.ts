@@ -158,8 +158,8 @@ test("稳定回答的常见问法不会被模型规划器改写路由", async ()
 
   const questions = [
     "为什么说 IHG 85% 业务采纳率的分母口径待澄清？",
-    "电商 Agent 评测沙箱是如何把完成率从 56% 提升到 88% 的？",
-    "中文帮助文档 RAG 评测有哪些关键发现和短板？",
+    "你在 aTalent 的 IHG 人才库 RAG 问答助手具体做了什么？",
+    "模型选型是怎么做出来的？",
   ];
   for (const [index, question] of questions.entries()) {
     const responseEvents = await events(await POST(request({
@@ -177,8 +177,8 @@ test("深层方法指代沿用上一轮 RAG 语境", async () => {
   process.env.DEEPSEEK_API_KEY = "test-only-placeholder";
   const question = "如果这套方法没有改善效果，你下一步会优先排查什么？";
   const history = [
-    { role: "user" as const, content: "中文帮助文档 RAG 评测有哪些关键发现和短板？" },
-    { role: "assistant" as const, content: "我基于 45 篇中文帮助文档和 30 条带证据句评测集对比了 9 组配置，发现口语化提问在 9 组均未命中 Top-1。" },
+    { role: "user" as const, content: "你在 aTalent 的 IHG 人才库 RAG 问答助手具体做了什么？" },
+    { role: "assistant" as const, content: "IHG 人才库 RAG 问答助手使用向量召回加 Rerank，并做了 5 轮 30 条内部 QA，多跳约占一半。" },
   ];
   const localFrame = buildLocalQuestionFrame(question, history);
   const items = retrieveKnowledge(question, { history, limit: 4, frame: localFrame });
@@ -198,8 +198,8 @@ test("深层方法指代沿用上一轮 RAG 语境", async () => {
   assert.equal(metaEvent(responseEvents).mode, "live");
   assert.equal(metaEvent(responseEvents).responseStatus, "completed");
   assert.equal(metaEvent(responseEvents).disposition, "scoped_answer");
-  assert.equal((metaEvent(responseEvents).claimIds as string[]).includes("C11"), true);
-  assert.equal((metaEvent(responseEvents).sourceIds as string[]).includes("S4"), true);
+  assert.equal((metaEvent(responseEvents).claimIds as string[]).includes("C8"), true);
+  assert.equal((metaEvent(responseEvents).sourceIds as string[]).includes("S2"), true);
   assert.equal(responseEvents.at(-1).responseStatus, "completed");
 });
 
@@ -409,13 +409,13 @@ test("核心稳定回答不进入模型且始终使用事实骨架", async () =>
 
   const responseEvents = await events(await POST(request({
     sessionId: "api-quality-fallback",
-    messages: [{ role: "user", content: "电商 Agent 评测沙箱是如何把完成率从 56% 提升到 88% 的？" }],
+    messages: [{ role: "user", content: "你在 aTalent 的 IHG 人才库 RAG 问答助手具体做了什么？" }],
   })));
   const answer = responseEvents.filter((event) => event.type === "delta").map((event) => event.content).join("");
   assert.equal(calls, 0);
   assert.equal(metaEvent(responseEvents).mode, "stable");
-  assert.match(answer, /56%/);
-  assert.match(answer, /88%/);
+  assert.match(answer, /Rerank|Redis/);
+  assert.match(answer, /5 轮|30 条/);
   assert.doesNotMatch(answer, /校园数据门户|30 人|90%/);
   assert.equal(responseEvents.at(-1).responseStatus, "completed");
 });
@@ -447,7 +447,7 @@ test("事实敏感开放题由 Flash 生成并经 Pro 强制审校", async () =>
   globalThis.fetch = async () => {
     calls += 1;
     if (calls === 1) return deepSeekStream("我在 aTalent 实习中负责企业 AI 方案与落地推进，具体内容以公开事实为准。", 100);
-    const question = "你在 aTalent 实习中具体负责了哪些工作？";
+    const question = "你在千问办公渠道调研中主要负责哪些拆解工作？";
     const frame = buildLocalQuestionFrame(question);
     const items = retrieveKnowledge(question, { history: [], limit: 4, frame });
     const revised = buildAnswerPlan(question, items, undefined, [], frame).fallbackAnswer;
@@ -456,13 +456,13 @@ test("事实敏感开放题由 Flash 生成并经 Pro 强制审校", async () =>
 
   const responseEvents = await events(await POST(request({
     sessionId: "api-pro-repair",
-    messages: [{ role: "user", content: "你在 aTalent 实习中具体负责了哪些工作？" }],
+    messages: [{ role: "user", content: "你在千问办公渠道调研中主要负责哪些拆解工作？" }],
   })));
   const answer = responseEvents.filter((event) => event.type === "delta").map((event) => event.content).join("");
   assert.equal(calls, 2);
   assert.equal(responseEvents.at(-1)?.modelPath, "pro");
   assert.equal(responseEvents.at(-1)?.degraded, false);
-  assert.match(answer, /aTalent|IHG|春风动力/);
+  assert.match(answer, /千问|渠道|Draco/);
 });
 
 test("开放题双模型失败时显示服务不可用而不冒充成功", async () => {

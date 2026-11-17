@@ -8,11 +8,13 @@ const topics = [
   "role_fit",
   "education",
   "atalent",
-  "agent_sandbox",
-  "rag_eval",
-  "jira_tool",
-  "campus",
   "rag",
+  "model_selection",
+  "baichuan_rag",
+  "talentmatch",
+  "seedance_eval",
+  "qwen_channel",
+  "jira_tool",
   "ask_me",
   "skills",
   "enterprise_ai",
@@ -71,7 +73,7 @@ export function inferAnswerIntent(question: string, topic: QuestionTopic = "unkn
   if (/技术能力|技术栈|会什么|工具|sql|prd|figma|飞书|评测|如何评估|有哪些实践/i.test(question) || facet === "evaluation") return "skills";
   if (facet === "contribution") return "contribution";
   if ((facet === "fit" && topic === "role_fit") || topic === "role_fit") return "role_fit";
-  if (["atalent", "agent_sandbox", "rag_eval", "rag", "jira_tool", "campus", "ask_me", "agent"].includes(topic)) return "project_overview";
+  if (facet === "overview" && ["atalent", "rag", "model_selection", "baichuan_rag", "talentmatch", "seedance_eval", "qwen_channel", "jira_tool", "ask_me", "agent"].includes(topic)) return "project_overview";
   return "general";
 }
 
@@ -105,41 +107,46 @@ export const plannedQuestionFrameSchema = z.object({
   focusTerms: z.array(z.string().min(2).max(30)).min(1).max(4),
   targetRole: z.string().min(2).max(30).optional(),
   requestedDimensions: z.array(z.string().min(2).max(30)).min(1).max(4),
-  activeProject: z.enum(["atalent-ihg", "agent-eval-sandbox", "rag-retrieval-eval", "jira-tool", "campus-workflow", "ask-me"]).optional(),
+  activeProject: z.enum(["atalent-ihg", "atalent-rag", "model-selection", "baichuan-rag", "talentmatch", "ask-me", "seedance-eval", "qwen-channel", "jira-tool"]).optional(),
   useHistory: z.boolean(),
   confidence: z.number().min(0).max(1),
 });
 
 const topicKnowledge: Record<QuestionTopic, string[]> = {
-  profile: ["K1", "K2", "K3", "K4", "K6", "K7", "K11"],
-  role_fit: ["K2", "K4", "K5", "K6", "K7", "K8", "K9"],
+  profile: ["K1", "K2", "K3", "K4", "K5", "K7", "K14"],
+  role_fit: ["K2", "K4", "K5", "K6", "K7", "K8", "K10", "K11"],
   education: ["K3", "K1"],
-  atalent: ["K4", "K5", "K11"],
-  agent_sandbox: ["K6", "K11"],
-  rag_eval: ["K7", "K11"],
-  rag: ["K7", "K11"],
-  jira_tool: ["K8", "K9"],
-  campus: ["K9", "K3"],
-  ask_me: ["K10", "K11"],
-  skills: ["K9", "K8", "K6", "K7"],
-  enterprise_ai: ["K4", "K5", "K11"],
-  agent: ["K6", "K10"],
+  atalent: ["K4", "K13", "K14"],
+  rag: ["K5", "K7", "K14"],
+  model_selection: ["K6", "K14"],
+  baichuan_rag: ["K7", "K14"],
+  talentmatch: ["K8", "K14"],
+  seedance_eval: ["K10", "K14"],
+  qwen_channel: ["K11", "K14"],
+  jira_tool: ["K12", "K14"],
+  ask_me: ["K9", "K14"],
+  skills: ["K2", "K12", "K6", "K5", "K10", "K11"],
+  enterprise_ai: ["K4", "K5", "K6", "K13", "K14"],
+  agent: ["K4", "K5", "K7", "K8", "K9"],
   unknown: [],
 };
 
 const topicPatterns: Array<[QuestionTopic, RegExp]> = [
+  ["baichuan_rag", /百川|医疗\s*rag|多跳\s*4\.38|单跳\s*9\.71|3\s*轮\s*30\s*次|陷阱题/i],
+  ["model_selection", /模型选型|选型|l1[—–-]l4|l1\s*到\s*l4|gpt-4o|haiku|bge|m3e|报价方案/i],
+  ["rag", /rag|rerank|redis|多助手|多跳|bad\s*case|5\s*轮|30\s*条/i],
+  ["talentmatch", /talentmatch|简历初筛|66\s*次|220k|盲评|幻觉怎么量|pilot/i],
+  ["seedance_eval", /seedance|视频生成|视频评测|120\s*条|24\s*条|六维/i],
+  ["qwen_channel", /千问|draco|渠道调研|30\s*条渠道|10\s*个?产品/i],
   ["atalent", /atalent|ihg|洲际|人才匹配|语音助手|高管端|春风动力|惠灵顿/i],
-  ["agent_sandbox", /沙箱|参数预检|预算熔断|56%|88%|30\+|多步决策/i],
-  ["rag_eval", /rag|bm25|bge-small-zh|rrf|recall@5|mrr|引用准确率|120\s*字符|口语化|帮助文档/i],
   ["jira_tool", /jira|claude|提单|5\s*分钟|1\s*分钟/i],
-  ["campus", /学生会|审批流|飞书|多维表格|wiki|生成式\s*ui|figma|prd|sql/i],
-  ["education", /东华大学|信息管理|信管|gpa|3\.3|前\s*10%|到岗|6\s*个月|每周/i],
-  ["ask_me", /ask\s*me|数字分身|不编造|claim|source/i],
+  ["education", /东华大学|信息管理|信管|gpa|3\.6|前\s*10%|到岗|6\s*个月|每周/i],
+  ["ask_me", /ask\s*me|数字分身|不编造|claim|source|mock/i],
   ["agent", /agent|智能体/i],
   ["enterprise_ai", /企业级?\s*ai|企业场景|隐私|脱敏/i],
   ["role_fit", /岗位|匹配|适合|胜任|优势|入职|承担/i],
   ["profile", /自我介绍|介绍一下|郑栩|短板|不足|待澄清/i],
-  ["skills", /技能|工具|技术/i],
+  ["skills", /技能|工具|技术|原型|figma|prd|sql/i],
 ];
 
 const facetPatterns: Array<[QuestionFacet, RegExp]> = [
@@ -151,77 +158,97 @@ const facetPatterns: Array<[QuestionFacet, RegExp]> = [
   ["result", /结果|成果|完成|上线|规模|提升/i],
   ["boundary", /短板|不足|限制|边界|风险|待澄清|分母/i],
   ["architecture", /架构|链路|技术方案/i],
-  ["method", /方法|如何|怎么|思考|取舍/i],
+  ["method", /方法|如何|怎么|思考|取舍|作用|机制|原理|降级/i],
   ["problem", /解决.*问题|什么问题|痛点/i],
   ["fit", /匹配|契合|适合|胜任|优势|价值/i],
 ];
 
 function topicForAnswerId(id: string): QuestionTopic {
-  if (["A01", "A16", "A17"].includes(id)) return "profile";
-  if (["A02", "A19"].includes(id)) return "role_fit";
+  if (["A01", "A28"].includes(id)) return "profile";
+  if (id === "A02") return "role_fit";
   if (["A03", "A04", "A05", "A06"].includes(id)) return "atalent";
-  if (["A07", "A08", "A20"].includes(id)) return "agent_sandbox";
-  if (["A09", "A10", "A11"].includes(id)) return "rag_eval";
-  if (id === "A12") return "jira_tool";
-  if (id === "A13") return "skills";
-  if (["A14", "A15"].includes(id)) return "education";
-  if (id === "A18") return "ask_me";
+  if (["A07", "A08", "A09", "A10"].includes(id)) return "rag";
+  if (["A11", "A12", "A13"].includes(id)) return "model_selection";
+  if (["A14", "A15", "A16"].includes(id)) return "baichuan_rag";
+  if (["A17", "A18"].includes(id)) return "talentmatch";
+  if (["A19", "A20"].includes(id)) return "ask_me";
+  if (["A21", "A22"].includes(id)) return "seedance_eval";
+  if (["A23", "A24"].includes(id)) return "qwen_channel";
+  if (id === "A25") return "jira_tool";
+  if (id === "A26") return "skills";
+  if (id === "A27") return "education";
   return "profile";
 }
 
 function facetForAnswerId(id: string): QuestionFacet {
-  if (["A05", "A16"].includes(id)) return "boundary";
-  if (["A02", "A15", "A19"].includes(id)) return "fit";
-  if (["A04"].includes(id)) return "contribution";
-  if (["A07", "A09"].includes(id)) return "evaluation";
-  if (["A08", "A10", "A11", "A20"].includes(id)) return "method";
+  if (["A05", "A16", "A22", "A28"].includes(id)) return "boundary";
+  if (id === "A02") return "fit";
+  if (["A04", "A07", "A14", "A21", "A23"].includes(id)) return "contribution";
+  if (["A10", "A15", "A18"].includes(id)) return "evaluation";
+  if (["A08", "A09", "A11", "A12", "A13", "A17", "A20", "A24", "A25"].includes(id)) return "method";
   return "overview";
 }
 
 function projectForTopic(topic: QuestionTopic): QuestionFrame["activeProject"] {
   if (topic === "atalent") return "atalent-ihg";
-  if (topic === "agent_sandbox" || topic === "agent") return "agent-eval-sandbox";
-  if (topic === "rag_eval" || topic === "rag") return "rag-retrieval-eval";
-  if (topic === "jira_tool") return "jira-tool";
-  if (topic === "campus") return "campus-workflow";
+  if (topic === "rag") return "atalent-rag";
+  if (topic === "model_selection") return "model-selection";
+  if (topic === "baichuan_rag") return "baichuan-rag";
+  if (topic === "talentmatch") return "talentmatch";
   if (topic === "ask_me") return "ask-me";
+  if (topic === "seedance_eval") return "seedance-eval";
+  if (topic === "qwen_channel") return "qwen-channel";
+  if (topic === "jira_tool") return "jira-tool";
   return undefined;
 }
 
 const nextIdsByContractId: Record<string, string[]> = {
-  A01: ["A04", "A07", "A14"],
-  A02: ["A03", "A09", "A16"],
+  A01: ["A04", "A07", "A27"],
+  A02: ["A03", "A11", "A28"],
   A03: ["A04", "A05", "A06"],
   A04: ["A05", "A06", "A07"],
-  A05: ["A06", "A09", "A16"],
-  A06: ["A04", "A07", "A13"],
-  A07: ["A08", "A09", "A20"],
-  A08: ["A09", "A12", "A04"],
-  A09: ["A10", "A11", "A07"],
-  A10: ["A11", "A12", "A13"],
-  A11: ["A07", "A04", "A13"],
-  A12: ["A13", "A07", "A14"],
-  A13: ["A14", "A04", "A16"],
-  A14: ["A01", "A04", "A02"],
-  A15: ["A04", "A07", "A16"],
-  A16: ["A04", "A09", "A02"],
-  A17: ["A18", "A04", "A14"],
-  A18: ["A01", "A04", "A07"],
-  A19: ["A14", "A04", "A16"],
-  A20: ["A08", "A09", "A16"],
+  A05: ["A06", "A07", "A28"],
+  A06: ["A04", "A07", "A11"],
+  A07: ["A08", "A09", "A10"],
+  A08: ["A07", "A10", "A11"],
+  A09: ["A04", "A07", "A10"],
+  A10: ["A07", "A14", "A15"],
+  A11: ["A12", "A13", "A04"],
+  A12: ["A11", "A13", "A07"],
+  A13: ["A11", "A12", "A14"],
+  A14: ["A15", "A16", "A07"],
+  A15: ["A14", "A16", "A10"],
+  A16: ["A14", "A15", "A28"],
+  A17: ["A18", "A11", "A28"],
+  A18: ["A17", "A14", "A20"],
+  A19: ["A20", "A01", "A27"],
+  A20: ["A19", "A05", "A28"],
+  A21: ["A22", "A23", "A17"],
+  A22: ["A21", "A28", "A17"],
+  A23: ["A24", "A21", "A11"],
+  A24: ["A23", "A21", "A26"],
+  A25: ["A26", "A28", "A04"],
+  A26: ["A25", "A27", "A04"],
+  A27: ["A01", "A04", "A02"],
+  A28: ["A05", "A17", "A25"],
 };
 
 const aliasesByContractId: Record<string, string[]> = {
   A01: ["60 秒了解郑栩。", "60秒了解郑栩。", "请介绍一下你自己", "介绍一下郑栩", "30秒自我介绍", "90秒自我介绍"],
-  A02: ["你与 AI 产品经理岗位的匹配证据是什么？", "他为什么适合 AI 产品经理岗位？"],
+  A02: ["你与 AI 产品经理岗位的匹配证据是什么？", "他为什么适合 AI 产品经理岗位？", "你为什么适合 AI 产品经理岗位？"],
   A03: ["哪个公开项目最能代表他的 AI 产品能力？", "代表项目是什么？"],
   A04: ["他在 aTalent 的 IHG AI 人才匹配项目具体做了什么？", "IHG 项目做了什么？"],
   A05: ["为什么说 IHG 85% 业务采纳率的分母口径待澄清？", "85% 采纳率的分母是什么？"],
   A06: ["他在 aTalent 还服务过哪些其他客户？", "春风动力和惠灵顿国际学校做了什么？"],
-  A07: ["电商 Agent 评测沙箱是怎么提升到 88% 的？", "Agent 评测沙箱项目具体做了什么？"],
-  A09: ["RAG 检索评测实验有哪些发现？", "中文帮助文档 RAG 评测结果如何？"],
-  A14: ["郑栩是什么学校和专业？", "他的到岗时间和实习周期是多久？"],
-  A16: ["他的主要短板和待核实问题是什么？"],
+  A07: ["他在 aTalent 的 IHG 人才库 RAG 问答助手具体做了什么？", "IHG RAG 问答助手做了什么？"],
+  A11: ["模型选型是怎么做的？", "IHG 模型选型是怎么做出来的？"],
+  A12: ["模型选型最后定了哪个模型？", "到底选了哪个模型？"],
+  A14: ["他在百川智能的医疗 RAG 项目具体做了什么？", "百川医疗 RAG 做了什么？"],
+  A21: ["Seedance 视频生成评测方案做了什么？", "视频评测方案做了什么？"],
+  A23: ["千问办公渠道调研做了什么？"],
+  A25: ["Claude Jira 工单工具是怎么提效的？", "Claude Jira 提单工具是如何提效的？"],
+  A27: ["郑栩是什么学校和专业？", "他的到岗时间和实习周期是多久？"],
+  A28: ["他的主要短板和待核实问题是什么？", "他的主要短板和待澄清口径有哪些？"],
 };
 
 export const questionContracts: QuestionContract[] = stableAnswerContent.map((item) => {
@@ -244,7 +271,7 @@ export const questionContracts: QuestionContract[] = stableAnswerContent.map((it
       activeProject: item.relatedProject ?? projectForTopic(topic),
       useHistory: false,
       confidence: 1,
-      requiredKnowledgeIds: item.id === "A16" ? ["K11", "K4", "K7", "K1"] : topicKnowledge[topic],
+      requiredKnowledgeIds: item.id === "A28" ? ["K14", "K4", "K7", "K1"] : topicKnowledge[topic],
       allowedStoryIds: [...item.preferredStoryIds],
       forbiddenTopics: [],
       responseShape: item.responseShape,
@@ -333,22 +360,36 @@ export function buildLocalQuestionFrame(question: string, history: { role: "user
     : undefined;
   const questionMode = questionModeFor(question, answerIntent);
   const reference = /这个|该项目|其中|它|上述|这套|这种|这些|那些|那次|当时|刚才|前面/.test(question);
-  const historyProject = [...history].reverse()
-    .find((message) => message.role === "user" && /atalent|ihg|洲际|春风动力|惠灵顿|沙箱|rag|jira|claude|学生会|ask\s*me/i.test(message.content))
-    ?.content.match(/atalent|ihg|洲际|春风动力|惠灵顿|沙箱|rag|jira|claude|学生会|ask\s*me/i)?.[0]?.toLowerCase();
-  const inferredTopic: QuestionTopic = topic === "unknown" && reference
-    ? (historyProject && /rag/.test(historyProject) ? "rag_eval"
-      : historyProject && /沙箱/.test(historyProject) ? "agent_sandbox"
-        : historyProject && /jira|claude/.test(historyProject) ? "jira_tool"
-          : historyProject && /学生会/.test(historyProject) ? "campus"
-            : historyProject?.includes("ask") ? "ask_me"
-              : historyProject ? "atalent" : "unknown")
+  const historyMsg = [...history].reverse()
+    .find((message) => message.role === "user" && /百川|选型|rag|talentmatch|seedance|视频|千问|draco|jira|claude|ask\s*me|atalent|ihg|洲际|春风动力|惠灵顿/i.test(message.content))
+    ?.content ?? "";
+  const inferredTopic: QuestionTopic = topic === "unknown" && reference && historyMsg
+    ? (/百川/.test(historyMsg) ? "baichuan_rag"
+      : /rag/i.test(historyMsg) ? "rag"
+        : /选型/.test(historyMsg) ? "model_selection"
+          : /talentmatch/i.test(historyMsg) ? "talentmatch"
+            : /seedance|视频/.test(historyMsg) ? "seedance_eval"
+              : /千问|draco/i.test(historyMsg) ? "qwen_channel"
+                : /jira|claude/i.test(historyMsg) ? "jira_tool"
+                  : /ask\s*me/i.test(historyMsg) ? "ask_me"
+                    : "atalent")
     : topic;
   const explicitTopic = inferredTopic !== "unknown";
-  const hasMethodContext = /AI|产品|模型|RAG|Agent|沙箱|检索|评测|数据|用户|指标|需求|项目|功能|失败|复盘|取舍|协作|团队|岗位|工作|压力|冲突|学习|加班|职业|选择/i.test(question);
+  const hasMethodContext = /AI|产品|模型|RAG|Agent|选型|检索|评测|数据|用户|指标|需求|项目|功能|失败|复盘|取舍|协作|团队|岗位|工作|压力|冲突|学习|加班|职业|选择/i.test(question);
   const hasStrongLocalIntent = !["general", "project_overview", "challenge", "diagnosis"].includes(answerIntent)
     || (["challenge", "diagnosis"].includes(answerIntent) && hasMethodContext);
   const interviewReasoning = /(?:你怎么看|如何看待|你会如何|如果|假设|面对|遇到|为什么|为何|如何|怎么).{0,20}(?:岗位|工作|团队|压力|冲突|学习|加班|职业|选择|产品|AI|业务|协作|沟通|优先级)/i.test(question);
+
+  const storyByTopic: Partial<Record<QuestionTopic, string[]>> = {
+    atalent: ["ST1", "ST5"],
+    rag: ["ST2"],
+    baichuan_rag: ["ST3"],
+    talentmatch: ["ST4"],
+    seedance_eval: ["ST6"],
+    qwen_channel: ["ST7"],
+    jira_tool: ["ST8"],
+    ask_me: ["ST9"],
+  };
 
   return {
     topic: inferredTopic,
@@ -362,8 +403,8 @@ export function buildLocalQuestionFrame(question: string, history: { role: "user
     activeProject: projectForTopic(inferredTopic),
     useHistory: reference,
     confidence: ["career_transition", "role_fit"].includes(answerIntent) ? 0.92 : interviewReasoning ? 0.86 : hasStrongLocalIntent ? 0.88 : explicitTopic && facet !== "overview" ? 0.86 : explicitTopic ? 0.72 : facet !== "overview" ? 0.58 : 0.35,
-    requiredKnowledgeIds: ["career_transition", "experience_value"].includes(answerIntent) ? ["K1", "K2", "K3", "K4", "K6", "K7"] : topicKnowledge[inferredTopic],
-    allowedStoryIds: facet === "example" ? (inferredTopic === "atalent" ? ["ST1", "ST2"] : inferredTopic === "agent_sandbox" ? ["ST3"] : inferredTopic === "rag_eval" ? ["ST4"] : []) : [],
+    requiredKnowledgeIds: ["career_transition", "experience_value"].includes(answerIntent) ? ["K1", "K2", "K3", "K4", "K5", "K7"] : topicKnowledge[inferredTopic],
+    allowedStoryIds: facet === "example" ? (storyByTopic[inferredTopic] ?? []) : [],
     forbiddenTopics: forbiddenFor(inferredTopic),
     responseShape: answerIntent === "career_transition" ? "narrative" : responseShapeFor(facet),
     targetLength: { min: facet === "overview" ? 220 : 280, max: 480 },
@@ -408,9 +449,9 @@ export function mergePlannedFrame(local: QuestionFrame, planned: z.infer<typeof 
     activeProject: planned.activeProject ?? projectForTopic(topic),
     useHistory: planned.useHistory,
     confidence: planned.confidence,
-    requiredKnowledgeIds: ["career_transition", "experience_value"].includes(answerIntent) ? ["K1", "K2", "K3", "K4", "K6", "K7"] : topicKnowledge[topic],
+    requiredKnowledgeIds: ["career_transition", "experience_value"].includes(answerIntent) ? ["K1", "K2", "K3", "K4", "K5", "K7"] : topicKnowledge[topic],
     allowedStoryIds: facet === "example" || facet === "transfer"
-      ? (topic === "atalent" ? ["ST1", "ST2"] : topic === "agent_sandbox" ? ["ST3"] : topic === "rag_eval" ? ["ST4"] : [])
+      ? (topic === "atalent" ? ["ST1", "ST5"] : topic === "rag" ? ["ST2"] : topic === "baichuan_rag" ? ["ST3"] : topic === "talentmatch" ? ["ST4"] : topic === "seedance_eval" ? ["ST6"] : topic === "qwen_channel" ? ["ST7"] : topic === "jira_tool" ? ["ST8"] : topic === "ask_me" ? ["ST9"] : [])
       : [],
     forbiddenTopics: forbiddenFor(topic),
     responseShape: answerIntent === "career_transition" ? "narrative" : responseShapeFor(facet),

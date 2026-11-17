@@ -13,7 +13,7 @@ test("DeepSeek 地址为空时使用官方地址", () => {
 });
 
 test("召回岗位匹配知识并保留证据边界", () => {
-  const result = retrieveKnowledge("他与 AI 产品经理岗位的匹配证据是什么？");
+  const result = retrieveKnowledge("他为什么适合产品经理岗位？");
   assert.equal(result[0]?.id, "K2");
   assert.ok((result[0]?.limitations ?? "").length > 0);
 });
@@ -55,10 +55,10 @@ test("Agent 身份与能力问题使用独立意图且不受深层会话固定�
 });
 
 test("默认回答采用面试表达，不机械展示证据与免责声明", () => {
-  const stable = matchStableAnswer("你为什么适合 AI 产品经理岗位？");
+  const stable = matchStableAnswer("你为什么适合产品经理岗位？");
   assert.ok(stable);
-  const answer = demoAnswer("你为什么适合 AI 产品经理岗位？", retrieveKnowledge(stable.question), stable);
-  assert.match(answer, /AI 产品/);
+  const answer = demoAnswer("你为什么适合产品经理岗位？", retrieveKnowledge(stable.question), stable);
+  assert.match(answer, /产品/);
   assert.doesNotMatch(answer, /证据边界|待核实问题|\[S\d+\]|录用结论/);
   assert.match(systemPrompt, /适度美化表达/);
   assert.match(systemPrompt, /不得新增事件/);
@@ -76,59 +76,59 @@ test("稳定回答由回答卡自然说明完成边界，不追加机械尾注",
 });
 
 test("招聘高频表达稳定匹配对应面试回答", () => {
-  assert.equal(matchStableAnswer("你为什么适合 AI 产品经理岗位？")?.id, "A02");
+  assert.equal(matchStableAnswer("你为什么适合产品经理岗位？")?.id, "A02");
   assert.equal(matchStableAnswer("你在 aTalent 的 IHG AI 人才匹配项目具体做了什么？")?.id, "A04");
   assert.equal(matchStableAnswer("为什么说 IHG 85% 业务采纳率的分母口径待澄清？")?.id, "A05");
-  assert.equal(matchStableAnswer("电商 Agent 评测沙箱是如何把完成率从 56% 提升到 88% 的？")?.id, "A07");
-  assert.equal(matchStableAnswer("中文帮助文档 RAG 评测有哪些关键发现和短板？")?.id, "A09");
-  assert.equal(matchStableAnswer("Claude Jira 工单工具是如何提效的？")?.id, "A12");
-  assert.equal(matchStableAnswer("你在东华大学的教育背景和可到岗时间是什么？")?.id, "A14");
-  assert.equal(matchStableAnswer("如果入职 AI 产品团队，你最先能承担哪些工作？")?.id, "A19");
+  assert.equal(matchStableAnswer("你在 aTalent 的 IHG 人才库 RAG 问答助手具体做了什么？")?.id, "A07");
+  assert.equal(matchStableAnswer("模型选型是怎么做出来的？")?.id, "A11");
+  assert.equal(matchStableAnswer("你在百川智能的医疗 RAG 项目具体做了什么？")?.id, "A14");
+  assert.equal(matchStableAnswer("Claude Jira 提单工具是怎么提效的？")?.id, "A25");
+  assert.equal(matchStableAnswer("你在东华大学的教育背景和可到岗时间是什么？")?.id, "A27");
 });
 
 test("只有被问到短板或边界时，回退回答才自然补充限制", () => {
-  const normal = demoAnswer("介绍一下电商 Agent 评测沙箱", retrieveKnowledge("介绍一下电商 Agent 评测沙箱"));
-  const boundary = demoAnswer("电商 Agent 评测沙箱还有哪些不足？", retrieveKnowledge("电商 Agent 评测沙箱还有哪些不足？"));
+  const normal = demoAnswer("介绍一下 TalentMatch 简历初筛评测", retrieveKnowledge("介绍一下 TalentMatch 简历初筛评测"));
+  const boundary = demoAnswer("TalentMatch 简历初筛评测还有哪些不足？", retrieveKnowledge("TalentMatch 简历初筛评测还有哪些不足？"));
   assert.doesNotMatch(normal, /\*\*当前阶段\*\*/);
   assert.match(boundary, /\*\*当前阶段\*\*/);
 });
 
 test("项目挑战类问题自动调用对应公开 STAR 故事", () => {
-  const items = retrieveKnowledge("RAG 项目遇到什么挑战？");
+  const items = retrieveKnowledge("IHG RAG 问答助手遇到什么挑战？");
   const stories = getRelatedStarStories(items);
-  const answer = demoAnswer("RAG 项目遇到什么挑战？", items);
-  assert.equal(stories[0]?.relatedProject, "rag-retrieval-eval");
-  assert.match(answer, /45 篇|30 条|口语化/);
+  const answer = demoAnswer("IHG RAG 问答助手遇到什么挑战？", items);
+  assert.equal(stories[0]?.relatedProject, "atalent-rag");
+  assert.match(answer, /5 轮|30 条|多跳/);
   assert.match(answer, /\*\*我的行动\*\*/);
   assert.doesNotMatch(answer, /\[S\d+\]|证据边界/);
 });
 
 test("项目别名只用于检索，不会把所有 RAG 追问误配成代表项目标准答案", () => {
-  assert.equal(matchStableAnswer("RAG 中 bge-small-zh 向量检索和 RRF 混合有什么差异？"), undefined);
-  assert.equal(retrieveKnowledge("RAG 中 bge-small-zh 向量检索和 RRF 混合有什么差异？")[0]?.id, "K7");
+  assert.equal(matchStableAnswer("IHG RAG 助手里 Redis 短期记忆和 Rerank 降级有什么作用？"), undefined);
+  assert.equal(retrieveKnowledge("IHG RAG 助手里 Redis 短期记忆和 Rerank 降级有什么作用？")[0]?.id, "K5");
 });
 
 test("省略项目名的贡献追问沿用最近项目，不误答成其他项目", () => {
   const history = [
-    { role: "user" as const, content: "介绍一下电商多步决策 Agent 与离线评测沙箱。" },
-    { role: "assistant" as const, content: "电商 Agent 评测沙箱通过意图解析、工具调用、沙箱预检和离线评测完成闭环。" },
+    { role: "user" as const, content: "介绍一下百川智能医疗 RAG 项目。" },
+    { role: "assistant" as const, content: "百川医疗 RAG 评测使用团队共用 3 轮 30 次数据，我负责评测模块。" },
   ];
-  assert.notEqual(matchStableAnswer("你做了什么？", history)?.id, "A09");
-  assert.equal(retrieveKnowledge("你做了什么？", { history })[0]?.relatedProject, "agent-eval-sandbox");
+  assert.notEqual(matchStableAnswer("你做了什么？", history)?.id, "A07");
+  assert.equal(retrieveKnowledge("你做了什么？", { history })[0]?.relatedProject, "baichuan-rag");
 });
 
 test("无模型时按问题组织检索证据，而不是返回固定项目套话", () => {
-  const question = "电商 Agent 评测沙箱中的参数预检和预算熔断是怎么设计的？";
+  const question = "IHG 人才库 RAG 助手里的 Rerank 和 Redis 短期记忆是怎么设计的？";
   const answer = demoAnswer(question, retrieveKnowledge(question));
-  assert.match(answer, /参数预检|预算熔断/);
+  assert.match(answer, /Rerank|Redis/);
   assert.doesNotMatch(answer, /最具代表性的公开项目/);
 });
 
 test("多轮回答计划识别已讲内容并要求补充新信息", () => {
   const question = "这个项目中你本人做了什么？";
   const history = [
-    { role: "user" as const, content: "介绍一下 RAG 检索与引用评测项目。" },
-    { role: "assistant" as const, content: "我基于 45 篇中文帮助文档和 30 条带证据句评测集，对比了 9 组配置。" },
+    { role: "user" as const, content: "介绍一下 IHG RAG 问答助手项目。" },
+    { role: "assistant" as const, content: "我基于 5 轮 30 条内部 QA 介绍了向量召回与 Rerank。" },
   ];
   const items = retrieveKnowledge(question, { history });
   const stable = matchStableAnswer(question, history);
@@ -142,7 +142,7 @@ test("多轮回答计划识别已讲内容并要求补充新信息", () => {
 });
 
 test("自然语言改写仍能召回正确经历", () => {
-  assert.equal(retrieveKnowledge("他在 aTalent 服务的春风动力和惠灵顿国际学校做了什么？")[0]?.id, "K5");
+  assert.equal(retrieveKnowledge("他在 aTalent 服务的春风动力和惠灵顿国际学校做了什么？")[0]?.id, "K13");
   assert.equal(retrieveKnowledge("他在东华大学的专业、GPA 和到岗时间是什么？")[0]?.id, "K3");
 });
 

@@ -25,12 +25,15 @@ const RAW_FIELD_PHRASES = [
 ];
 
 const TOPIC_TERMS: Partial<Record<AnswerPlan["topic"], string[]>> = {
-  rag_eval: ["RAG", "BM25", "bge-small-zh", "RRF", "Recall@5", "MRR", "引用准确率"],
-  rag: ["RAG", "BM25", "bge-small-zh", "RRF", "Recall@5", "MRR", "引用准确率"],
-  agent_sandbox: ["沙箱", "参数预检", "预算熔断", "离线评测", "56%", "88%"],
+  rag: ["RAG", "Rerank", "Redis", "多助手", "多跳", "5 轮", "30 条"],
+  model_selection: ["选型", "L1", "L4", "GPT-4o", "Haiku", "BGE", "M3E"],
+  baichuan_rag: ["百川", "医疗 RAG", "多跳", "4.38", "9.71", "3 轮", "30 次"],
+  talentmatch: ["TalentMatch", "66 次", "220k", "Pilot", "盲评"],
+  seedance_eval: ["Seedance", "视频", "六维", "120 条", "24 条"],
+  qwen_channel: ["千问", "DRACO", "渠道", "30 条"],
   atalent: ["aTalent", "IHG", "洲际", "春风动力", "惠灵顿", "语音助手", "向量匹配"],
-  jira_tool: ["Jira", "Claude", "提单", "5 分钟", "1 分钟"],
-  education: ["东华大学", "信息管理与信息系统", "3.3", "前 10%"],
+  jira_tool: ["Jira", "Claude", "提单", "自述未验证"],
+  education: ["东华大学", "信息管理与信息系统", "3.6", "前 10%"],
 };
 
 function forbiddenTopicLeak(topic: AnswerPlan["topic"], candidate: string, allowedText: string) {
@@ -52,7 +55,6 @@ const RISKY_CLAIMS = [
   "生产环境",
   "商业化",
   "东北大学",
-  "百川智能",
   "百度",
   "德勤",
   "容诚",
@@ -199,7 +201,7 @@ export function validateAnswer(candidate: string, plan: AnswerPlan): QualityGate
   const allowedNumbers = normalizedNumbers(allowedText);
 
   // 计划长度只用于组织信息，不把不同问题强行压进同一字数区间。
-  const minimumUsableLength = plan.responseShape === "direct" ? 80 : 120;
+  const minimumUsableLength = plan.responseShape === "direct" ? (plan.contractId ? 50 : 80) : 120;
   if (clean.length < minimumUsableLength) triggers.push("answer_too_short");
   if (clean.length > 900) triggers.push("answer_too_long");
   const emphasized = extractAnswerEmphasis(clean);

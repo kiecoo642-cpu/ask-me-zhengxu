@@ -86,3 +86,33 @@ test("支持 OpenRouter、Groq、Together、NVIDIA NIM、Z.ai GLM 与自定义�
   assert.equal(custom.fallbackModel, "custom-model-v1");
   assert.equal(custom.configured, true);
 });
+
+test("支持 2026-11-17 新增的 9 个免费 OpenAI-compatible Provider 预设且默认未激活", () => {
+  const cases = [
+    { id: "sambanova", keyEnv: "SAMBANOVA_API_KEY", baseURL: "https://api.sambanova.ai/v1", primary: "DeepSeek-V3.1", fallback: "gpt-oss-120b" },
+    { id: "amd", keyEnv: "RADEON_API_KEY", baseURL: "https://developer.amd.com.cn/radeon/api/v1", primary: "DeepSeek-V4-Flash", fallback: "DeepSeek-V4.1-Flash" },
+    { id: "novita", keyEnv: "NOVITA_API_KEY", baseURL: "https://api.novita.ai/openai", primary: "apodex/apodex-1.1-mini", fallback: "apodex/apodex-1.1-mini" },
+    { id: "merkium", keyEnv: "MERKIUM_API_KEY", baseURL: "https://chat.merkium.nl/api/v1", primary: "ganymede-1.1", fallback: "pluto-1.2-pro" },
+    { id: "hetzner", keyEnv: "HETZNER_API_KEY", baseURL: "https://inference.hetzner.com/api/v1", primary: "Qwen/Qwen3.6-35B-A3B-FP8", fallback: "Qwen3.8-27B" },
+    { id: "unorouter", keyEnv: "UNOROUTER_API_KEY", baseURL: "https://api.unorouter.com/v1", primary: "gemini-3.8-flash:free", fallback: "gemini-3.8-flash:free" },
+    { id: "llmkiwi", keyEnv: "LLM_KIWI_API_KEY", baseURL: "https://api.llm.kiwi/v1", primary: "auto", fallback: "auto" },
+    { id: "maritaca", keyEnv: "MARITACA_API_KEY", baseURL: "https://chat.maritaca.ai/api", primary: "S5-free", fallback: "S5-free" },
+    { id: "cheapllm", keyEnv: "CHEAPLLM_API_KEY", baseURL: "https://cheapllm.shop/v1", primary: "deepseek-v4.1-flash-1017", fallback: "deepseek-v4.1-flash-1017" },
+  ] as const;
+
+  for (const item of cases) {
+    const unconfigured = resolveProviderConfig({ NODE_ENV: "test", AI_PROVIDER: item.id });
+    assert.equal(unconfigured.configured, false);
+
+    const configured = resolveProviderConfig({
+      NODE_ENV: "test",
+      AI_PROVIDER: item.id,
+      [item.keyEnv]: "test-placeholder-key",
+    });
+    assert.equal(configured.presetId, item.id);
+    assert.equal(configured.baseURL, item.baseURL);
+    assert.equal(configured.primaryModel, item.primary);
+    assert.equal(configured.fallbackModel, item.fallback);
+    assert.equal(configured.configured, true);
+  }
+});

@@ -60,6 +60,15 @@ npm run dev
 - **Together AI**：`AI_PROVIDER=together`、`AI_BASE_URL=https://api.together.xyz/v1`、`TOGETHER_API_KEY=<your-key>`、`AI_MODEL=meta-llama/Llama-3.3-70B-Instruct-Turbo`
 - **NVIDIA NIM（需用户提供 `nvapi-` 密钥）**：`AI_PROVIDER=nvidia`、`AI_BASE_URL=https://integrate.api.nvidia.com/v1`、`NVIDIA_API_KEY=<your-key>`、`AI_MODEL=nvidia/nemotron-3`
 - **Z.ai GLM（免费 Flash 系列，需用户提供密钥）**：`AI_PROVIDER=zai`、`AI_BASE_URL=https://api.z.ai/api/paas/v4/`、`ZAI_API_KEY=<your-key>`、`AI_MODEL=glm-4.7-flash`
+- **SambaNova Cloud**：`AI_PROVIDER=sambanova`、`AI_BASE_URL=https://api.sambanova.ai/v1`、`SAMBANOVA_API_KEY=<your-key>`、`AI_MODEL=DeepSeek-V3.1`（备选 `gpt-oss-120b`）
+- **AMD Token Factory（仅中国站，试用/开发用）**：`AI_PROVIDER=amd`、`AI_BASE_URL=https://developer.amd.com.cn/radeon/api/v1`、`RADEON_API_KEY=<your-key>`、`AI_MODEL=DeepSeek-V4-Flash`
+- **Novita AI**：`AI_PROVIDER=novita`、`AI_BASE_URL=https://api.novita.ai/openai`、`NOVITA_API_KEY=<your-key>`、`AI_MODEL=apodex/apodex-1.1-mini`
+- **Merkium**：`AI_PROVIDER=merkium`、`AI_BASE_URL=https://chat.merkium.nl/api/v1`、`MERKIUM_API_KEY=<your-key>`、`AI_MODEL=ganymede-1.1`（备选 `pluto-1.2-pro`）
+- **Hetzner Inference API**：`AI_PROVIDER=hetzner`、`AI_BASE_URL=https://inference.hetzner.com/api/v1`、`HETZNER_API_KEY=<your-key>`、`AI_MODEL=Qwen/Qwen3.6-35B-A3B-FP8`（备选 `Qwen3.8-27B`）
+- **UnoRouter**：`AI_PROVIDER=unorouter`、`AI_BASE_URL=https://api.unorouter.com/v1`、`UNOROUTER_API_KEY=<your-key>`、`AI_MODEL=gemini-3.8-flash:free`
+- **LLM.kiwi**：`AI_PROVIDER=llmkiwi`、`AI_BASE_URL=https://api.llm.kiwi/v1`、`LLM_KIWI_API_KEY=<your-key>`、`AI_MODEL=auto`
+- **Maritaca AI**：`AI_PROVIDER=maritaca`、`AI_BASE_URL=https://chat.maritaca.ai/api`、`MARITACA_API_KEY=<your-key>`、`AI_MODEL=S5-free`
+- **cheapllm.shop**：`AI_PROVIDER=cheapllm`、`AI_BASE_URL=https://cheapllm.shop/v1`、`CHEAPLLM_API_KEY=<your-key>`、`AI_MODEL=deepseek-v4.1-flash-1017`
 
 ## 验证命令
 

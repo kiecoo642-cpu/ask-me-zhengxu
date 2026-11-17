@@ -135,7 +135,7 @@ const topicPatterns: Array<[QuestionTopic, RegExp]> = [
   ["ask_me", /ask\s*me|数字分身|不编造|claim|source|mock|106\s*项|48\s*次/i],
   ["agent", /agent|智能体/i],
   ["enterprise_ai", /企业级?\s*ai|企业场景|隐私|脱敏/i],
-  ["role_fit", /岗位|匹配|适合|胜任|优势|入职|承担|录用/i],
+  ["role_fit", /岗位|匹配|适合|胜任|优势|入职|承担|录用|下一轮/i],
   ["profile", /自我介绍|介绍一下|郑栩|短板|不足|待澄清|串联/i],
   ["skills", /技能|工具|技术|原型|figma|prd|sql|python/i],
 ];

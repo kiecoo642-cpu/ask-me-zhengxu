@@ -398,7 +398,7 @@ export function Chat({ presetAnswers }: ChatProps) {
               </div>
               <nav className="mobile-contact" aria-label="公开入口">
                 <span className="education-detail">{profile.availability}</span>
-                <Link href="/resume"><FileTextIcon size={15} aria-hidden="true" />简历占位 PDF（待替换）</Link>
+                <Link href="/resume"><FileTextIcon size={15} aria-hidden="true" />个人简历 PDF</Link>
               </nav>
             </section>
 

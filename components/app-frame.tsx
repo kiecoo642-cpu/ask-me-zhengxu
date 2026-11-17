@@ -24,7 +24,7 @@ const publicLinks: Array<{
   event?: string;
   target?: string;
 }> = [
-  { label: "简历占位 PDF（待替换）", href: "/resume", icon: FileTextIcon },
+  { label: "个人简历 PDF", href: "/resume", icon: FileTextIcon },
 ];
 
 export function AppFrame({ children }: { children: ReactNode }) {

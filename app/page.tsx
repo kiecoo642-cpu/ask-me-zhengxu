@@ -24,7 +24,7 @@ export default function Home() {
             <span>公开资料问答</span>
           </div>
           <Link className="resume-link" href="/resume">
-            <span>简历占位 PDF</span>
+            <span>个人简历 PDF</span>
             <FileTextIcon size={15} aria-hidden="true" />
           </Link>
         </header>

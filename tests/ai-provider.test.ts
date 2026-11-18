@@ -116,3 +116,27 @@ test("支持 2026-11-17 新增的 9 个免费 OpenAI-compatible Provider 预设�
     assert.equal(configured.configured, true);
   }
 });
+
+test("支持 2026-11-18 新增的 3 个免费 OpenAI-compatible Provider 预设且默认未激活", () => {
+  const cases = [
+    { id: "exaone", keyEnv: "EXAONE_API_KEY", baseURL: "https://api.exaone.ai/v1", primary: "k-exaone_v2.5", fallback: "k-exaone_v2.5" },
+    { id: "requesty", keyEnv: "REQUESTY_API_KEY", baseURL: "https://router.requesty.ai/v1", primary: "gemma-4-31b-it", fallback: "nemotron-3-ultra-550b-a55b" },
+    { id: "zro", keyEnv: "ZRO_API_KEY", baseURL: "https://zro.moonmath.ai/v1", primary: "deepseek-v4.1-flash", fallback: "deepseek-v4.1-flash" },
+  ] as const;
+
+  for (const item of cases) {
+    const unconfigured = resolveProviderConfig({ NODE_ENV: "test", AI_PROVIDER: item.id });
+    assert.equal(unconfigured.configured, false);
+
+    const configured = resolveProviderConfig({
+      NODE_ENV: "test",
+      AI_PROVIDER: item.id,
+      [item.keyEnv]: "test-placeholder-key",
+    });
+    assert.equal(configured.presetId, item.id);
+    assert.equal(configured.baseURL, item.baseURL);
+    assert.equal(configured.primaryModel, item.primary);
+    assert.equal(configured.fallbackModel, item.fallback);
+    assert.equal(configured.configured, true);
+  }
+});

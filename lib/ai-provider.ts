@@ -19,6 +19,9 @@ export type KnownProviderId =
   | "llmkiwi"
   | "maritaca"
   | "cheapllm"
+  | "exaone"
+  | "requesty"
+  | "zro"
   | "openai"
   | "openai-compatible";
 
@@ -170,6 +173,33 @@ export const PROVIDER_PRESETS: Record<KnownProviderId, ProviderPreset> = {
     envApiKeyNames: ["AI_API_KEY", "CHEAPLLM_API_KEY"],
     notes: "Free during beta; post-beta permanent free tier is 5,000 input + 1,000 output tokens/hour. Small operator (watch-and-see).",
   },
+  exaone: {
+    id: "exaone",
+    label: "LG EXAONE",
+    defaultBaseURL: "https://api.exaone.ai/v1",
+    defaultPrimaryModel: "k-exaone_v2.5",
+    defaultFallbackModel: "k-exaone_v2.5",
+    envApiKeyNames: ["AI_API_KEY", "EXAONE_API_KEY"],
+    notes: "Currently available free of charge since 2026-11-09 (no end date or numeric quota published); 750B/31B MoE, 524K context, Korean/English text-only.",
+  },
+  requesty: {
+    id: "requesty",
+    label: "Requesty",
+    defaultBaseURL: "https://router.requesty.ai/v1",
+    defaultPrimaryModel: "gemma-4-31b-it",
+    defaultFallbackModel: "nemotron-3-ultra-550b-a55b",
+    envApiKeyNames: ["AI_API_KEY", "REQUESTY_API_KEY"],
+    notes: "200 free requests/day on free models without a card; free model list changes often—verify against official free models page.",
+  },
+  zro: {
+    id: "zro",
+    label: "Zro (MoonMath)",
+    defaultBaseURL: "https://zro.moonmath.ai/v1",
+    defaultPrimaryModel: "deepseek-v4.1-flash",
+    defaultFallbackModel: "deepseek-v4.1-flash",
+    envApiKeyNames: ["AI_API_KEY", "ZRO_API_KEY"],
+    notes: "Free plan ($0/mo) for Flash models (daily usage on DeepSeek V4.1 Flash, resets every day), no card required; exact daily quota not published.",
+  },
   openai: {
     id: "openai",
     label: "OpenAI",
@@ -216,6 +246,9 @@ function normalizeProviderId(raw?: string): KnownProviderId {
   if (value === "llmkiwi" || value === "llm.kiwi") return "llmkiwi";
   if (value === "maritaca") return "maritaca";
   if (value === "cheapllm" || value === "cheapllm.shop") return "cheapllm";
+  if (value === "exaone" || value === "lg-exaone") return "exaone";
+  if (value === "requesty") return "requesty";
+  if (value === "zro" || value === "moonmath") return "zro";
   if (value === "openai") return "openai";
   return "openai-compatible";
 }

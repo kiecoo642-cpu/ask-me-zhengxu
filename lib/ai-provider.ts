@@ -22,6 +22,8 @@ export type KnownProviderId =
   | "exaone"
   | "requesty"
   | "zro"
+  | "aihubmix"
+  | "freeai"
   | "openai"
   | "openai-compatible";
 
@@ -200,6 +202,24 @@ export const PROVIDER_PRESETS: Record<KnownProviderId, ProviderPreset> = {
     envApiKeyNames: ["AI_API_KEY", "ZRO_API_KEY"],
     notes: "Free plan ($0/mo) for Flash models (daily usage on DeepSeek V4.1 Flash, resets every day), no card required; exact daily quota not published.",
   },
+  aihubmix: {
+    id: "aihubmix",
+    label: "AIHubMix",
+    defaultBaseURL: "https://aihubmix.com/v1",
+    defaultPrimaryModel: "gpt-4.1-free",
+    defaultFallbackModel: "gpt-4.1-free",
+    envApiKeyNames: ["AI_API_KEY", "AIHUBMIX_API_KEY"],
+    notes: "Aggregator with 27+ free models (IDs end with -free); no card required, no trial expiration, daily quota reset.",
+  },
+  freeai: {
+    id: "freeai",
+    label: "Free.ai",
+    defaultBaseURL: "https://api.free.ai/v1",
+    defaultPrimaryModel: "qwen7b",
+    defaultFallbackModel: "qwen7b",
+    envApiKeyNames: ["AI_API_KEY", "FREEAI_API_KEY"],
+    notes: "Self-hosted free pool (30,000 tokens/day, 1,000 req/month free tier, 60 RPM, no card required; key format sk-free-...). Connected via standard OpenAI-compatible /v1/chat/completions; /v1/chat/ vs /v1/chat/completions compatibility pending user live-key test.",
+  },
   openai: {
     id: "openai",
     label: "OpenAI",
@@ -249,6 +269,8 @@ function normalizeProviderId(raw?: string): KnownProviderId {
   if (value === "exaone" || value === "lg-exaone") return "exaone";
   if (value === "requesty") return "requesty";
   if (value === "zro" || value === "moonmath") return "zro";
+  if (value === "aihubmix") return "aihubmix";
+  if (value === "freeai" || value === "free.ai" || value === "free-ai") return "freeai";
   if (value === "openai") return "openai";
   return "openai-compatible";
 }

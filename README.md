@@ -30,7 +30,7 @@ npm run dev
 
 | 变量名 | 用途 | 必填 |
 | --- | --- | --- |
-| `AI_PROVIDER` | 模型 Provider 标识（默认 `deepseek`，可选 `gemini` / `openrouter` / `groq` / `together` / `nvidia` / `zai` / `sambanova` / `amd` / `novita` / `merkium` / `hetzner` / `unorouter` / `llmkiwi` / `maritaca` / `cheapllm` / `exaone` / `requesty` / `zro` / `openai` / `openai-compatible`） | 可选 |
+| `AI_PROVIDER` | 模型 Provider 标识（默认 `deepseek`，可选 `gemini` / `openrouter` / `groq` / `together` / `nvidia` / `zai` / `sambanova` / `amd` / `novita` / `merkium` / `hetzner` / `unorouter` / `llmkiwi` / `maritaca` / `cheapllm` / `exaone` / `requesty` / `zro` / `aihubmix` / `freeai` / `openai` / `openai-compatible`） | 可选 |
 | `AI_BASE_URL` | 自定义 OpenAI-compatible 接口地址（未设置时按 `AI_PROVIDER` 使用预设地址） | 可选 |
 | `AI_API_KEY` | 通用模型 API 服务端密钥（优先读取；未设置时按 Provider 自动回退到 `DEEPSEEK_API_KEY` / `GEMINI_API_KEY` 等，禁止 `NEXT_PUBLIC_`） | 可选（启用模型问答时必填） |
 | `AI_MODEL` | 主生成模型名称（未设置时按 `AI_PROVIDER` 使用默认模型） | 可选 |
@@ -72,6 +72,8 @@ npm run dev
 - **LG EXAONE**：`AI_PROVIDER=exaone`、`AI_BASE_URL=https://api.exaone.ai/v1`、`EXAONE_API_KEY=<your-key>`、`AI_MODEL=k-exaone_v2.5`
 - **Requesty**：`AI_PROVIDER=requesty`、`AI_BASE_URL=https://router.requesty.ai/v1`、`REQUESTY_API_KEY=<your-key>`、`AI_MODEL=gemma-4-31b-it`（备选 `nemotron-3-ultra-550b-a55b`）
 - **Zro (MoonMath)**：`AI_PROVIDER=zro`、`AI_BASE_URL=https://zro.moonmath.ai/v1`、`ZRO_API_KEY=<your-key>`、`AI_MODEL=deepseek-v4.1-flash`
+- **AIHubMix**：`AI_PROVIDER=aihubmix`、`AI_BASE_URL=https://aihubmix.com/v1`、`AIHUBMIX_API_KEY=<your-key>`、`AI_MODEL=gpt-4.1-free`
+- **Free.ai**：`AI_PROVIDER=freeai`、`AI_BASE_URL=https://api.free.ai/v1`、`FREEAI_API_KEY=<your-key>`、`AI_MODEL=qwen7b`（标准 OpenAI-compatible 接入，`/v1/chat/completions` 兼容性待实测）
 
 ## 验证命令
 

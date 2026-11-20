@@ -30,7 +30,7 @@ npm run dev
 
 | 变量名 | 用途 | 必填 |
 | --- | --- | --- |
-| `AI_PROVIDER` | 模型 Provider 标识（默认 `deepseek`，可选 `gemini` / `openrouter` / `groq` / `together` / `nvidia` / `zai` / `sambanova` / `amd` / `novita` / `merkium` / `hetzner` / `unorouter` / `llmkiwi` / `maritaca` / `cheapllm` / `exaone` / `requesty` / `zro` / `aihubmix` / `freeai` / `openai` / `openai-compatible`） | 可选 |
+| `AI_PROVIDER` | 模型 Provider 标识（默认 `deepseek`，可选 `gemini` / `openrouter` / `groq` / `together` / `nvidia` / `zai` / `sambanova` / `amd` / `novita` / `merkium` / `hetzner` / `unorouter` / `llmkiwi` / `maritaca` / `cheapllm` / `exaone` / `requesty` / `zro` / `aihubmix` / `freeai` / `freeapiai` / `siliconflow` / `openai` / `openai-compatible`） | 可选 |
 | `AI_BASE_URL` | 自定义 OpenAI-compatible 接口地址（未设置时按 `AI_PROVIDER` 使用预设地址） | 可选 |
 | `AI_API_KEY` | 通用模型 API 服务端密钥（优先读取；未设置时按 Provider 自动回退到 `DEEPSEEK_API_KEY` / `GEMINI_API_KEY` 等，禁止 `NEXT_PUBLIC_`） | 可选（启用模型问答时必填） |
 | `AI_MODEL` | 主生成模型名称（未设置时按 `AI_PROVIDER` 使用默认模型） | 可选 |
@@ -74,6 +74,8 @@ npm run dev
 - **Zro (MoonMath)**：`AI_PROVIDER=zro`、`AI_BASE_URL=https://zro.moonmath.ai/v1`、`ZRO_API_KEY=<your-key>`、`AI_MODEL=deepseek-v4.1-flash`
 - **AIHubMix**：`AI_PROVIDER=aihubmix`、`AI_BASE_URL=https://aihubmix.com/v1`、`AIHUBMIX_API_KEY=<your-key>`、`AI_MODEL=gpt-4.1-free`
 - **Free.ai**：`AI_PROVIDER=freeai`、`AI_BASE_URL=https://api.free.ai/v1`、`FREEAI_API_KEY=<your-key>`、`AI_MODEL=qwen7b`（标准 OpenAI-compatible 接入，`/v1/chat/completions` 兼容性待实测）
+- **FreeAPIAI（免密钥、免注册）**：`AI_PROVIDER=freeapiai`、`AI_BASE_URL=https://api.freeapiai.com/v1`、`AI_MODEL=free-ai`（无需注册或真实密钥，`FREEAPIAI_API_KEY` 留空时默认使用占位符 `"free"`；每 IP 1 req/s、突发 3、并发 2、每日 10,000 次或 10,000,000 tokens，UTC 00:00 重置，32K 上下文 / 单次回复上限 16K tokens，超限返回 429。**注意**：官方明确说明该模型无审核层、无 SLA 或在线率保证，且请求会保留技术记录（时间、IP、User-Agent、国家、端点、状态、用量））
+- **SiliconFlow**：`AI_PROVIDER=siliconflow`、`AI_BASE_URL=https://api.siliconflow.cn/v1`、`SILICONFLOW_API_KEY=<your-key>`、`AI_MODEL=Qwen/Qwen3-8B`（备选 `deepseek-ai/DeepSeek-R1-0528-Qwen3-8B`；定价页标注 `free` 的对话模型成本为 0，官方仅公布按类别范围 Chat RPM 1,000-10,000 / TPM 50,000-5,000,000。**注意**：官方文档要求必须完成实名认证（中国大陆身份证 / 港澳台居住证或通行证 + 支付宝人脸识别）方可使用所有免费模型，且仅限中国大陆及港澳台地区使用）
 
 ## 验证命令
 

@@ -24,6 +24,8 @@ export type KnownProviderId =
   | "zro"
   | "aihubmix"
   | "freeai"
+  | "freeapiai"
+  | "siliconflow"
   | "openai"
   | "openai-compatible";
 
@@ -34,6 +36,7 @@ export interface ProviderPreset {
   defaultPrimaryModel: string;
   defaultFallbackModel: string;
   envApiKeyNames: string[];
+  defaultApiKey?: string;
   notes?: string;
 }
 
@@ -220,6 +223,26 @@ export const PROVIDER_PRESETS: Record<KnownProviderId, ProviderPreset> = {
     envApiKeyNames: ["AI_API_KEY", "FREEAI_API_KEY"],
     notes: "Self-hosted free pool (30,000 tokens/day, 1,000 req/month free tier, 60 RPM, no card required; key format sk-free-...). Connected via standard OpenAI-compatible /v1/chat/completions; /v1/chat/ vs /v1/chat/completions compatibility pending user live-key test.",
   },
+  freeapiai: {
+    id: "freeapiai",
+    label: "FreeAPIAI",
+    defaultBaseURL: "https://api.freeapiai.com/v1",
+    defaultPrimaryModel: "free-ai",
+    defaultFallbackModel: "free-ai",
+    envApiKeyNames: ["AI_API_KEY", "FREEAPIAI_API_KEY"],
+    defaultApiKey: "free",
+    // Official site states: no moderation layer, no SLA, no uptime guarantee, and requests keep technical records (time, IP, User-Agent, country, endpoint, status, usage).
+    notes: "No key, no registration, no paid tier (1 req/s burst 3, 2 concurrent, 10k req/day or 10M tokens/day per IP, UTC 00:00 reset; 32K ctx, 16K max reply). No moderation layer, no SLA/uptime guarantee; keeps technical request logs (time, IP, UA, country, endpoint, status, usage).",
+  },
+  siliconflow: {
+    id: "siliconflow",
+    label: "SiliconFlow",
+    defaultBaseURL: "https://api.siliconflow.cn/v1",
+    defaultPrimaryModel: "Qwen/Qwen3-8B",
+    defaultFallbackModel: "deepseek-ai/DeepSeek-R1-0528-Qwen3-8B",
+    envApiKeyNames: ["AI_API_KEY", "SILICONFLOW_API_KEY"],
+    notes: "Free models cost 0 (chat RPM 1,000-10,000, TPM 50,000-5,000,000). Real-name verification required (mainland China ID / HK-Macau-Taiwan permit + Alipay facial recognition); available only in mainland China, HK, Macau, and Taiwan.",
+  },
   openai: {
     id: "openai",
     label: "OpenAI",
@@ -271,6 +294,8 @@ function normalizeProviderId(raw?: string): KnownProviderId {
   if (value === "zro" || value === "moonmath") return "zro";
   if (value === "aihubmix") return "aihubmix";
   if (value === "freeai" || value === "free.ai" || value === "free-ai") return "freeai";
+  if (value === "freeapiai") return "freeapiai";
+  if (value === "siliconflow") return "siliconflow";
   if (value === "openai") return "openai";
   return "openai-compatible";
 }
@@ -290,7 +315,9 @@ export function resolveProviderConfig(env: NodeJS.ProcessEnv = process.env): Res
 
   const apiKey = preset.envApiKeyNames
     .map((name) => env[name]?.trim() ?? "")
-    .find(Boolean) ?? "";
+    .find(Boolean)
+    || preset.defaultApiKey
+    || "";
 
   const primaryRaw = env.AI_MODEL?.trim()
     || env.AI_PRIMARY_MODEL?.trim()

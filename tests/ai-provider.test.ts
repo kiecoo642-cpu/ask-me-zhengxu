@@ -172,3 +172,37 @@ test("支持 2026-11-18 晚间新增的 AIHubMix 与 Free.ai 预设且默认未�
   assert.equal(aliasFreeAi.configured, true);
 });
 
+test("支持 2026-11-20 新增的 FreeAPIAI（免密钥）与 SiliconFlow 预设且默认未激活", () => {
+  // FreeAPIAI: no key or registration required; defaults to placeholder "free" when SDK needs a non-empty key
+  const freeApiAiDefault = resolveProviderConfig({ NODE_ENV: "test", AI_PROVIDER: "freeapiai" });
+  assert.equal(freeApiAiDefault.presetId, "freeapiai");
+  assert.equal(freeApiAiDefault.baseURL, "https://api.freeapiai.com/v1");
+  assert.equal(freeApiAiDefault.primaryModel, "free-ai");
+  assert.equal(freeApiAiDefault.fallbackModel, "free-ai");
+  assert.equal(freeApiAiDefault.apiKey, "free");
+  assert.equal(freeApiAiDefault.configured, true);
+
+  const freeApiAiCustomKey = resolveProviderConfig({
+    NODE_ENV: "test",
+    AI_PROVIDER: "freeapiai",
+    FREEAPIAI_API_KEY: "custom-placeholder",
+  });
+  assert.equal(freeApiAiCustomKey.apiKey, "custom-placeholder");
+
+  // SiliconFlow: requires user-provided SILICONFLOW_API_KEY (and real-name verification)
+  const siliconUnconfigured = resolveProviderConfig({ NODE_ENV: "test", AI_PROVIDER: "siliconflow" });
+  assert.equal(siliconUnconfigured.configured, false);
+
+  const siliconConfigured = resolveProviderConfig({
+    NODE_ENV: "test",
+    AI_PROVIDER: "siliconflow",
+    SILICONFLOW_API_KEY: "test-placeholder-key",
+  });
+  assert.equal(siliconConfigured.presetId, "siliconflow");
+  assert.equal(siliconConfigured.baseURL, "https://api.siliconflow.cn/v1");
+  assert.equal(siliconConfigured.primaryModel, "Qwen/Qwen3-8B");
+  assert.equal(siliconConfigured.fallbackModel, "deepseek-ai/DeepSeek-R1-0528-Qwen3-8B");
+  assert.equal(siliconConfigured.configured, true);
+});
+
+

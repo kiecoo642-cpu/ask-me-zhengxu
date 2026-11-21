@@ -17,7 +17,6 @@ export type KnownProviderId =
   | "hetzner"
   | "unorouter"
   | "llmkiwi"
-  | "maritaca"
   | "cheapllm"
   | "exaone"
   | "requesty"
@@ -160,15 +159,6 @@ export const PROVIDER_PRESETS: Record<KnownProviderId, ProviderPreset> = {
     envApiKeyNames: ["AI_API_KEY", "LLM_KIWI_API_KEY"],
     notes: "Free with no card required; automatic routing with undisclosed backend models.",
   },
-  maritaca: {
-    id: "maritaca",
-    label: "Maritaca AI",
-    defaultBaseURL: "https://chat.maritaca.ai/api",
-    defaultPrimaryModel: "S5-free",
-    defaultFallbackModel: "S5-free",
-    envApiKeyNames: ["AI_API_KEY", "MARITACA_API_KEY"],
-    notes: "S5-free is free for a limited time, text-only, unbilled tokens, and may be taken offline at any time.",
-  },
   cheapllm: {
     id: "cheapllm",
     label: "cheapllm.shop",
@@ -287,7 +277,6 @@ function normalizeProviderId(raw?: string): KnownProviderId {
   if (value === "hetzner") return "hetzner";
   if (value === "unorouter") return "unorouter";
   if (value === "llmkiwi" || value === "llm.kiwi") return "llmkiwi";
-  if (value === "maritaca") return "maritaca";
   if (value === "cheapllm" || value === "cheapllm.shop") return "cheapllm";
   if (value === "exaone" || value === "lg-exaone") return "exaone";
   if (value === "requesty") return "requesty";

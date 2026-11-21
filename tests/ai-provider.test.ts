@@ -96,7 +96,6 @@ test("支持 2026-11-17 新增的 9 个免费 OpenAI-compatible Provider 预设�
     { id: "hetzner", keyEnv: "HETZNER_API_KEY", baseURL: "https://inference.hetzner.com/api/v1", primary: "Qwen/Qwen3.6-35B-A3B-FP8", fallback: "Qwen3.8-27B" },
     { id: "unorouter", keyEnv: "UNOROUTER_API_KEY", baseURL: "https://api.unorouter.com/v1", primary: "gemini-3.8-flash:free", fallback: "gemini-3.8-flash:free" },
     { id: "llmkiwi", keyEnv: "LLM_KIWI_API_KEY", baseURL: "https://api.llm.kiwi/v1", primary: "auto", fallback: "auto" },
-    { id: "maritaca", keyEnv: "MARITACA_API_KEY", baseURL: "https://chat.maritaca.ai/api", primary: "S5-free", fallback: "S5-free" },
     { id: "cheapllm", keyEnv: "CHEAPLLM_API_KEY", baseURL: "https://cheapllm.shop/v1", primary: "deepseek-v4.1-flash-1017", fallback: "deepseek-v4.1-flash-1017" },
   ] as const;
 

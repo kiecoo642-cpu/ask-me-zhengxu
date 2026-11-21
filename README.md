@@ -30,7 +30,7 @@ npm run dev
 
 | 变量名 | 用途 | 必填 |
 | --- | --- | --- |
-| `AI_PROVIDER` | 模型 Provider 标识（默认 `deepseek`，可选 `gemini` / `openrouter` / `groq` / `together` / `nvidia` / `zai` / `sambanova` / `amd` / `novita` / `merkium` / `hetzner` / `unorouter` / `llmkiwi` / `maritaca` / `cheapllm` / `exaone` / `requesty` / `zro` / `aihubmix` / `freeai` / `freeapiai` / `siliconflow` / `openai` / `openai-compatible`） | 可选 |
+| `AI_PROVIDER` | 模型 Provider 标识（默认 `deepseek`，可选 `gemini` / `openrouter` / `groq` / `together` / `nvidia` / `zai` / `sambanova` / `amd` / `novita` / `merkium` / `hetzner` / `unorouter` / `llmkiwi` / `cheapllm` / `exaone` / `requesty` / `zro` / `aihubmix` / `freeai` / `freeapiai` / `siliconflow` / `openai` / `openai-compatible`） | 可选 |
 | `AI_BASE_URL` | 自定义 OpenAI-compatible 接口地址（未设置时按 `AI_PROVIDER` 使用预设地址） | 可选 |
 | `AI_API_KEY` | 通用模型 API 服务端密钥（优先读取；未设置时按 Provider 自动回退到 `DEEPSEEK_API_KEY` / `GEMINI_API_KEY` 等，禁止 `NEXT_PUBLIC_`） | 可选（启用模型问答时必填） |
 | `AI_MODEL` | 主生成模型名称（未设置时按 `AI_PROVIDER` 使用默认模型） | 可选 |
@@ -67,7 +67,6 @@ npm run dev
 - **Hetzner Inference API**：`AI_PROVIDER=hetzner`、`AI_BASE_URL=https://inference.hetzner.com/api/v1`、`HETZNER_API_KEY=<your-key>`、`AI_MODEL=Qwen/Qwen3.6-35B-A3B-FP8`（备选 `Qwen3.8-27B`）
 - **UnoRouter**：`AI_PROVIDER=unorouter`、`AI_BASE_URL=https://api.unorouter.com/v1`、`UNOROUTER_API_KEY=<your-key>`、`AI_MODEL=gemini-3.8-flash:free`
 - **LLM.kiwi**：`AI_PROVIDER=llmkiwi`、`AI_BASE_URL=https://api.llm.kiwi/v1`、`LLM_KIWI_API_KEY=<your-key>`、`AI_MODEL=auto`
-- **Maritaca AI**：`AI_PROVIDER=maritaca`、`AI_BASE_URL=https://chat.maritaca.ai/api`、`MARITACA_API_KEY=<your-key>`、`AI_MODEL=S5-free`
 - **cheapllm.shop**：`AI_PROVIDER=cheapllm`、`AI_BASE_URL=https://cheapllm.shop/v1`、`CHEAPLLM_API_KEY=<your-key>`、`AI_MODEL=deepseek-v4.1-flash-1017`
 - **LG EXAONE**：`AI_PROVIDER=exaone`、`AI_BASE_URL=https://api.exaone.ai/v1`、`EXAONE_API_KEY=<your-key>`、`AI_MODEL=k-exaone_v2.5`
 - **Requesty**：`AI_PROVIDER=requesty`、`AI_BASE_URL=https://router.requesty.ai/v1`、`REQUESTY_API_KEY=<your-key>`、`AI_MODEL=gemma-4-31b-it`（备选 `nemotron-3-ultra-550b-a55b`）

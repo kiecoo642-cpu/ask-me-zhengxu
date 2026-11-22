@@ -25,6 +25,8 @@ export type KnownProviderId =
   | "freeai"
   | "freeapiai"
   | "siliconflow"
+  | "modelscope"
+  | "orcarouter"
   | "openai"
   | "openai-compatible";
 
@@ -233,6 +235,24 @@ export const PROVIDER_PRESETS: Record<KnownProviderId, ProviderPreset> = {
     envApiKeyNames: ["AI_API_KEY", "SILICONFLOW_API_KEY"],
     notes: "Free models cost 0 (chat RPM 1,000-10,000, TPM 50,000-5,000,000). Real-name verification required (mainland China ID / HK-Macau-Taiwan permit + Alipay facial recognition); available only in mainland China, HK, Macau, and Taiwan.",
   },
+  modelscope: {
+    id: "modelscope",
+    label: "ModelScope API-Inference",
+    defaultBaseURL: "https://api-inference.modelscope.cn/v1",
+    defaultPrimaryModel: "Qwen/Qwen3.5-35B-A3B",
+    defaultFallbackModel: "Qwen/Qwen3.5-35B-A3B",
+    envApiKeyNames: ["AI_API_KEY", "MODELSCOPE_API_KEY"],
+    notes: "Daily login 200 molis + Aliyun binding 50 molis/day (24h validity; ~0.5 light / ~1 standard / ~2 flagship per call). Must bind a real-name verified Aliyun account + verified email; official docs state no high-concurrency/SLA guarantee and non-commercial experience only. Model list rotates dynamically.",
+  },
+  orcarouter: {
+    id: "orcarouter",
+    label: "OrcaRouter",
+    defaultBaseURL: "https://api.orcarouter.ai/v1",
+    defaultPrimaryModel: "deepseek/deepseek-v4.1-flash-free",
+    defaultFallbackModel: "deepseek/deepseek-v4-flash-free",
+    envApiKeyNames: ["AI_API_KEY", "ORCAROUTER_API_KEY"],
+    notes: "Free package (10 RPM / 50 RPD without top-up; 20 RPM / 800 RPD after $20 lifetime spend; 429 free_quota_exhausted on limit). Free model list rotates (check /api/free-package/public). Third-party reports note free models may require a GitHub account with history or any prior top-up (not stated on official site; pending user live-key test).",
+  },
   openai: {
     id: "openai",
     label: "OpenAI",
@@ -285,6 +305,8 @@ function normalizeProviderId(raw?: string): KnownProviderId {
   if (value === "freeai" || value === "free.ai" || value === "free-ai") return "freeai";
   if (value === "freeapiai") return "freeapiai";
   if (value === "siliconflow") return "siliconflow";
+  if (value === "modelscope") return "modelscope";
+  if (value === "orcarouter") return "orcarouter";
   if (value === "openai") return "openai";
   return "openai-compatible";
 }

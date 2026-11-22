@@ -204,4 +204,28 @@ test("支持 2026-11-20 新增的 FreeAPIAI（免密钥）与 SiliconFlow 预设
   assert.equal(siliconConfigured.configured, true);
 });
 
+test("支持 2026-11-22 新增的 ModelScope 与 OrcaRouter 预设且默认未激活", () => {
+  const cases = [
+    { id: "modelscope", keyEnv: "MODELSCOPE_API_KEY", baseURL: "https://api-inference.modelscope.cn/v1", primary: "Qwen/Qwen3.5-35B-A3B", fallback: "Qwen/Qwen3.5-35B-A3B" },
+    { id: "orcarouter", keyEnv: "ORCAROUTER_API_KEY", baseURL: "https://api.orcarouter.ai/v1", primary: "deepseek/deepseek-v4.1-flash-free", fallback: "deepseek/deepseek-v4-flash-free" },
+  ] as const;
+
+  for (const item of cases) {
+    const unconfigured = resolveProviderConfig({ NODE_ENV: "test", AI_PROVIDER: item.id });
+    assert.equal(unconfigured.configured, false);
+
+    const configured = resolveProviderConfig({
+      NODE_ENV: "test",
+      AI_PROVIDER: item.id,
+      [item.keyEnv]: "test-placeholder-key",
+    });
+    assert.equal(configured.presetId, item.id);
+    assert.equal(configured.baseURL, item.baseURL);
+    assert.equal(configured.primaryModel, item.primary);
+    assert.equal(configured.fallbackModel, item.fallback);
+    assert.equal(configured.configured, true);
+  }
+});
+
+
 

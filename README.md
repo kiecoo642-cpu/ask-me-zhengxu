@@ -30,7 +30,7 @@ npm run dev
 
 | 变量名 | 用途 | 必填 |
 | --- | --- | --- |
-| `AI_PROVIDER` | 模型 Provider 标识（默认 `deepseek`，可选 `gemini` / `openrouter` / `groq` / `together` / `nvidia` / `zai` / `sambanova` / `amd` / `novita` / `merkium` / `hetzner` / `unorouter` / `llmkiwi` / `cheapllm` / `exaone` / `requesty` / `zro` / `aihubmix` / `freeai` / `freeapiai` / `siliconflow` / `modelscope` / `orcarouter` / `openai` / `openai-compatible`） | 可选 |
+| `AI_PROVIDER` | 模型 Provider 标识（默认 `deepseek`，可选 `gemini` / `openrouter` / `groq` / `together` / `nvidia` / `zai` / `sambanova` / `amd` / `novita` / `merkium` / `hetzner` / `unorouter` / `llmkiwi` / `cheapllm` / `exaone` / `requesty` / `zro` / `aihubmix` / `freeai` / `freeapiai` / `siliconflow` / `modelscope` / `orcarouter` / `bigmodel` / `sensenova` / `openai` / `openai-compatible`） | 可选 |
 | `AI_BASE_URL` | 自定义 OpenAI-compatible 接口地址（未设置时按 `AI_PROVIDER` 使用预设地址） | 可选 |
 | `AI_API_KEY` | 通用模型 API 服务端密钥（优先读取；未设置时按 Provider 自动回退到 `DEEPSEEK_API_KEY` / `GEMINI_API_KEY` 等，禁止 `NEXT_PUBLIC_`） | 可选（启用模型问答时必填） |
 | `AI_MODEL` | 主生成模型名称（未设置时按 `AI_PROVIDER` 使用默认模型） | 可选 |
@@ -77,6 +77,8 @@ npm run dev
 - **SiliconFlow**：`AI_PROVIDER=siliconflow`、`AI_BASE_URL=https://api.siliconflow.cn/v1`、`SILICONFLOW_API_KEY=<your-key>`、`AI_MODEL=Qwen/Qwen3-8B`（备选 `deepseek-ai/DeepSeek-R1-0528-Qwen3-8B`；定价页标注 `free` 的对话模型成本为 0，官方仅公布按类别范围 Chat RPM 1,000-10,000 / TPM 50,000-5,000,000。**注意**：官方文档要求必须完成实名认证（中国大陆身份证 / 港澳台居住证或通行证 + 支付宝人脸识别）方可使用所有免费模型，且仅限中国大陆及港澳台地区使用）
 - **ModelScope 魔搭 API-Inference**：`AI_PROVIDER=modelscope`、`AI_BASE_URL=https://api-inference.modelscope.cn/v1`、`MODELSCOPE_API_KEY=<your-ms-token>`、`AI_MODEL=Qwen/Qwen3.5-35B-A3B`（每日登录 200 魔粒 + 绑定阿里云 50 魔粒/天，24 小时有效；单次调用轻量 ~0.5 / 标准 ~1 / 旗舰 ~2 魔粒；模型清单随社区热度动态变化。**注意**：须绑定实名认证的阿里云账号并验证邮箱方可使用 API-Inference；官网明确免费服务无高并发或 SLA 保障、仅限非商业体验）
 - **OrcaRouter**：`AI_PROVIDER=orcarouter`、`AI_BASE_URL=https://api.orcarouter.ai/v1`、`ORCAROUTER_API_KEY=<your-sk-orca-key>`、`AI_MODEL=deepseek/deepseek-v4.1-flash-free`（备选 `deepseek/deepseek-v4-flash-free`；未充值 10 RPM / 50 RPD，生涯累计付费 \$20 后 20 RPM / 800 RPD，超限返回 `429 free_quota_exhausted`。**注意**：免费包清单轮换，以官方 `/api/free-package/public` 为准；第三方称免费模型可能须绑定有历史的 GitHub 账号或任意付费后才可用，官网未写明，待用户拿 key 实测）
+- **智谱 BigModel（国内版）**：`AI_PROVIDER=bigmodel`、`AI_BASE_URL=https://open.bigmodel.cn/api/paas/v4`、`BIGMODEL_API_KEY=<your-key>`、`AI_MODEL=glm-4.7-flash`（200K 上下文，输入/输出/缓存均免费、无限时限定词；备选视觉模型 `glm-4.6v-flash`，200K、输入/输出免费。**注意**：新用户另赠 2000 万 Tokens 资源包但官网未写明有效期（非永久有效）；免费模型并发/限速数字官网未公布；`GLM-4-Flash` 仅以 `GLM-4-Flash-250414` 见于定价表；BigModel 国内版与 Z.ai 国际版为不同平台，请勿混淆）
+- **商汤 SenseNova Token Plan**：`AI_PROVIDER=sensenova`、`AI_BASE_URL=https://token.sensenova.cn/v1`、`SENSENOVA_API_KEY=<your-key>`、`AI_MODEL=sensenova-6.8-flash-lite`（免费档 ¥0/月，公测期“限时放量”、额度规则可调整、付费档尚未上线；额度：通用积分池滚动 5 小时 120,000 / 滚动周 1,200,000，Flash-Lite 专属池 60,000/5 小时、600,000/周；注册需手机号验证，最多 20 个 API Key。**注意**：免费档仅确认 6.8 Flash Lite 与 U1 Fast，因 U1 命名存在文档 `U1.5 Lite/Fast` 与卡片 `U1 Fast` 出入暂不作备选默认；文档“模型总览”所列 DeepSeek V4.1 Flash / GLM-5.3 / Kimi K3 未列为免费档模型，是否在免费积分池内待用户实测）
 
 ## 验证命令
 

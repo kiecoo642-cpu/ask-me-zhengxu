@@ -227,5 +227,29 @@ test("支持 2026-11-22 新增的 ModelScope 与 OrcaRouter 预设且默认未�
   }
 });
 
+test("支持新增的 智谱 BigModel 与 商汤 SenseNova Token Plan 预设且默认未激活", () => {
+  const cases = [
+    { id: "bigmodel", keyEnv: "BIGMODEL_API_KEY", baseURL: "https://open.bigmodel.cn/api/paas/v4", primary: "glm-4.7-flash", fallback: "glm-4.6v-flash" },
+    { id: "sensenova", keyEnv: "SENSENOVA_API_KEY", baseURL: "https://token.sensenova.cn/v1", primary: "sensenova-6.8-flash-lite", fallback: "sensenova-6.8-flash-lite" },
+  ] as const;
+
+  for (const item of cases) {
+    const unconfigured = resolveProviderConfig({ NODE_ENV: "test", AI_PROVIDER: item.id });
+    assert.equal(unconfigured.configured, false);
+
+    const configured = resolveProviderConfig({
+      NODE_ENV: "test",
+      AI_PROVIDER: item.id,
+      [item.keyEnv]: "test-placeholder-key",
+    });
+    assert.equal(configured.presetId, item.id);
+    assert.equal(configured.baseURL, item.baseURL);
+    assert.equal(configured.primaryModel, item.primary);
+    assert.equal(configured.fallbackModel, item.fallback);
+    assert.equal(configured.configured, true);
+  }
+});
+
+
 
 

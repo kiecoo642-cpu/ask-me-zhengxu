@@ -27,6 +27,8 @@ export type KnownProviderId =
   | "siliconflow"
   | "modelscope"
   | "orcarouter"
+  | "bigmodel"
+  | "sensenova"
   | "openai"
   | "openai-compatible";
 
@@ -253,6 +255,24 @@ export const PROVIDER_PRESETS: Record<KnownProviderId, ProviderPreset> = {
     envApiKeyNames: ["AI_API_KEY", "ORCAROUTER_API_KEY"],
     notes: "Free package (10 RPM / 50 RPD without top-up; 20 RPM / 800 RPD after $20 lifetime spend; 429 free_quota_exhausted on limit). Free model list rotates (check /api/free-package/public). Third-party reports note free models may require a GitHub account with history or any prior top-up (not stated on official site; pending user live-key test).",
   },
+  bigmodel: {
+    id: "bigmodel",
+    label: "智谱 BigModel",
+    defaultBaseURL: "https://open.bigmodel.cn/api/paas/v4",
+    defaultPrimaryModel: "glm-4.7-flash",
+    defaultFallbackModel: "glm-4.6v-flash",
+    envApiKeyNames: ["AI_API_KEY", "BIGMODEL_API_KEY"],
+    notes: "glm-4.7-flash (200K ctx, free input/output/cache, no time-limit wording) & glm-4.6v-flash (vision, 200K, free input/output). New users receive a 20M-token resource pack (validity not stated on official site—do not assume permanent); free concurrency/rate limits not published. Note: GLM-4-Flash is listed only as dated GLM-4-Flash-250414; BigModel (China domestic) is distinct from Z.ai (international).",
+  },
+  sensenova: {
+    id: "sensenova",
+    label: "商汤 SenseNova Token Plan",
+    defaultBaseURL: "https://token.sensenova.cn/v1",
+    defaultPrimaryModel: "sensenova-6.8-flash-lite",
+    defaultFallbackModel: "sensenova-6.8-flash-lite",
+    envApiKeyNames: ["AI_API_KEY", "SENSENOVA_API_KEY"],
+    notes: "Free tier (¥0/month, public beta limited-time quota, rules subject to adjustment; paid tier not yet launched). Token Plan page confirms only 6.8 Flash Lite & U1 Fast (U1 omitted as fallback due to naming discrepancy U1.5 Lite/Fast vs U1 Fast); DeepSeek V4.1 Flash / GLM-5.3 / Kimi K3 in model overview are not listed as free-tier (pending live test). Pools: general 120k/5h & 1.2M/week; Flash-Lite 60k/5h & 600k/week. Phone verification required; up to 20 API keys.",
+  },
   openai: {
     id: "openai",
     label: "OpenAI",
@@ -307,6 +327,8 @@ function normalizeProviderId(raw?: string): KnownProviderId {
   if (value === "siliconflow") return "siliconflow";
   if (value === "modelscope") return "modelscope";
   if (value === "orcarouter") return "orcarouter";
+  if (value === "bigmodel") return "bigmodel";
+  if (value === "sensenova") return "sensenova";
   if (value === "openai") return "openai";
   return "openai-compatible";
 }

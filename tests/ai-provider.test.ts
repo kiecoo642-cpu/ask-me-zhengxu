@@ -250,6 +250,31 @@ test("支持新增的 智谱 BigModel 与 商汤 SenseNova Token Plan 预设且�
   }
 });
 
+test("支持 2026-11-25 新增的 Plugsky、Vikasit AI 与 NaraRouter 预设且默认未激活", () => {
+  const cases = [
+    { id: "plugsky", keyEnv: "PLUGSKY_API_KEY", baseURL: "https://api.plugsky.com/v1", primary: "plugsky-lite", fallback: "plugsky-micro" },
+    { id: "vikasit", keyEnv: "VIKASIT_API_KEY", baseURL: "https://api.vikasit.ai/v1", primary: "vikasit-nova", fallback: "vikasit-nova" },
+    { id: "nararouter", keyEnv: "NARAROUTER_API_KEY", baseURL: "https://router.bynara.id/v1", primary: "agnes-2.5-flash", fallback: "agnes-2.5-flash" },
+  ] as const;
+
+  for (const item of cases) {
+    const unconfigured = resolveProviderConfig({ NODE_ENV: "test", AI_PROVIDER: item.id });
+    assert.equal(unconfigured.configured, false);
+
+    const configured = resolveProviderConfig({
+      NODE_ENV: "test",
+      AI_PROVIDER: item.id,
+      [item.keyEnv]: "test-placeholder-key",
+    });
+    assert.equal(configured.presetId, item.id);
+    assert.equal(configured.baseURL, item.baseURL);
+    assert.equal(configured.primaryModel, item.primary);
+    assert.equal(configured.fallbackModel, item.fallback);
+    assert.equal(configured.configured, true);
+  }
+});
+
+
 
 
 

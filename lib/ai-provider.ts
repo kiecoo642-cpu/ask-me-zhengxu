@@ -29,6 +29,9 @@ export type KnownProviderId =
   | "orcarouter"
   | "bigmodel"
   | "sensenova"
+  | "plugsky"
+  | "vikasit"
+  | "nararouter"
   | "openai"
   | "openai-compatible";
 
@@ -262,7 +265,7 @@ export const PROVIDER_PRESETS: Record<KnownProviderId, ProviderPreset> = {
     defaultPrimaryModel: "glm-4.7-flash",
     defaultFallbackModel: "glm-4.6v-flash",
     envApiKeyNames: ["AI_API_KEY", "BIGMODEL_API_KEY"],
-    notes: "glm-4.7-flash (200K ctx, free input/output/cache, no time-limit wording) & glm-4.6v-flash (vision, 200K, free input/output). New users receive a 20M-token resource pack (validity not stated on official site—do not assume permanent); free concurrency/rate limits not published. Note: GLM-4-Flash is listed only as dated GLM-4-Flash-250414; BigModel (China domestic) is distinct from Z.ai (international).",
+    notes: "glm-4.7-flash (200K ctx, free input/output/cache, no time-limit wording), glm-4.6v-flash (vision, 200K, free input/output), & glm-z1-flash (128K, free input/output per official detailed pricing table; 6 free models total on detailed pricing table vs 2 in main FAQ). New users receive a 20M-token resource pack (validity not stated on official site—do not assume permanent); free concurrency/rate limits not published. Note: GLM-4-Flash is listed only as dated GLM-4-Flash-250414; BigModel (China domestic) is distinct from Z.ai (international).",
   },
   sensenova: {
     id: "sensenova",
@@ -272,6 +275,33 @@ export const PROVIDER_PRESETS: Record<KnownProviderId, ProviderPreset> = {
     defaultFallbackModel: "sensenova-6.8-flash-lite",
     envApiKeyNames: ["AI_API_KEY", "SENSENOVA_API_KEY"],
     notes: "Free tier (¥0/month, public beta limited-time quota, rules subject to adjustment; paid tier not yet launched). Token Plan page confirms only 6.8 Flash Lite & U1 Fast (U1 omitted as fallback due to naming discrepancy U1.5 Lite/Fast vs U1 Fast); DeepSeek V4.1 Flash / GLM-5.3 / Kimi K3 in model overview are not listed as free-tier (pending live test). Pools: general 120k/5h & 1.2M/week; Flash-Lite 60k/5h & 600k/week. Phone verification required; up to 20 API keys.",
+  },
+  plugsky: {
+    id: "plugsky",
+    label: "Plugsky",
+    defaultBaseURL: "https://api.plugsky.com/v1",
+    defaultPrimaryModel: "plugsky-lite",
+    defaultFallbackModel: "plugsky-micro",
+    envApiKeyNames: ["AI_API_KEY", "PLUGSKY_API_KEY"],
+    notes: "100% OpenAI-compatible (official site). Free tier includes only 2 first-party models (plugsky-lite, plugsky-micro): 100 req/day + 50,000 tokens/day for new accounts (~21 req / 10,400 tokens per 5h rolling window), 1 concurrent, 30 RPM, 2K max output tokens/req, no card required; first-party small models with unverified capability.",
+  },
+  vikasit: {
+    id: "vikasit",
+    label: "Vikasit AI",
+    defaultBaseURL: "https://api.vikasit.ai/v1",
+    defaultPrimaryModel: "vikasit-nova",
+    defaultFallbackModel: "vikasit-nova",
+    envApiKeyNames: ["AI_API_KEY", "VIKASIT_API_KEY"],
+    notes: "OpenAI-compatible (chat/streaming/tool calls supported). Free tier includes only 1 first-party model (vikasit-nova): 2,000,000 free tokens/day, GitHub login for key, no card required; official site notes free quota may be adjusted; first-party model capability unverified.",
+  },
+  nararouter: {
+    id: "nararouter",
+    label: "NaraRouter",
+    defaultBaseURL: "https://router.bynara.id/v1",
+    defaultPrimaryModel: "agnes-2.5-flash",
+    defaultFallbackModel: "agnes-2.5-flash",
+    envApiKeyNames: ["AI_API_KEY", "NARAROUTER_API_KEY"],
+    notes: "OpenAI-compatible (also supports Anthropic /v1/messages). Free tier has 7,000,000 tokens/day, 15 RPM, resets 07:00 WIB (00:00 UTC) daily, no card required, Google login for key; free list shrank from 3 models (2026-08 third-party test) to only agnes-2.5-flash (2026-11-25 official site; other 47+ catalog models are pay-as-you-go). First-party model capability unverified.",
   },
   openai: {
     id: "openai",
@@ -329,6 +359,9 @@ function normalizeProviderId(raw?: string): KnownProviderId {
   if (value === "orcarouter") return "orcarouter";
   if (value === "bigmodel") return "bigmodel";
   if (value === "sensenova") return "sensenova";
+  if (value === "plugsky") return "plugsky";
+  if (value === "vikasit" || value === "vikasit-ai" || value === "vikasitai") return "vikasit";
+  if (value === "nararouter" || value === "nara-router") return "nararouter";
   if (value === "openai") return "openai";
   return "openai-compatible";
 }

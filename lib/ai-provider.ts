@@ -32,6 +32,8 @@ export type KnownProviderId =
   | "plugsky"
   | "vikasit"
   | "nararouter"
+  | "anyapi"
+  | "routmy"
   | "openai"
   | "openai-compatible";
 
@@ -303,6 +305,24 @@ export const PROVIDER_PRESETS: Record<KnownProviderId, ProviderPreset> = {
     envApiKeyNames: ["AI_API_KEY", "NARAROUTER_API_KEY"],
     notes: "OpenAI-compatible (also supports Anthropic /v1/messages). Free tier has 7,000,000 tokens/day, 15 RPM, resets 07:00 WIB (00:00 UTC) daily, no card required, Google login for key; free list shrank from 3 models (2026-08 third-party test) to only agnes-2.5-flash (2026-11-25 official site; other 47+ catalog models are pay-as-you-go). First-party model capability unverified.",
   },
+  anyapi: {
+    id: "anyapi",
+    label: "AnyAPI",
+    defaultBaseURL: "https://api.anyapi.ai/v1",
+    defaultPrimaryModel: "inclusionai/ling-3.0-flash-fin:free",
+    defaultFallbackModel: "qwen/qwen3.8-27b:free",
+    envApiKeyNames: ["AI_API_KEY", "ANYAPI_API_KEY"],
+    notes: "Free $0/month, 100,000 AnyTokens per day (platform-internal billing unit, 1 is about 1,000 tokens for most models), no card required; alternative models: qwen/qwen3.8-27b:free, google/gemma-3n-4b:free; the full free-model list is only visible in the catalog after login; free-tier API calls are rate-limited, exact RPM is not published on the official site.",
+  },
+  routmy: {
+    id: "routmy",
+    label: "rout.my",
+    defaultBaseURL: "https://api.rout.my/v1",
+    defaultPrimaryModel: "deepseek/deepseek-v4.1-flash-1017@free",
+    defaultFallbackModel: "z-ai/glm-5.3-flash@free",
+    envApiKeyNames: ["AI_API_KEY", "ROUTMY_API_KEY"],
+    notes: "Free plan $0 (get the key via Discord login), 650,000 tokens per day; @free routes do not consume quota and remain usable after quota is exhausted; the free-route list may change; keep the @free route suffix in model IDs exactly as given — do NOT \"fix\" it into a model ID without the suffix.",
+  },
   openai: {
     id: "openai",
     label: "OpenAI",
@@ -362,6 +382,8 @@ function normalizeProviderId(raw?: string): KnownProviderId {
   if (value === "plugsky") return "plugsky";
   if (value === "vikasit" || value === "vikasit-ai" || value === "vikasitai") return "vikasit";
   if (value === "nararouter" || value === "nara-router") return "nararouter";
+  if (value === "anyapi") return "anyapi";
+  if (value === "routmy" || value === "rout.my") return "routmy";
   if (value === "openai") return "openai";
   return "openai-compatible";
 }

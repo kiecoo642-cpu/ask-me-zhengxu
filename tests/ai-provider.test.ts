@@ -274,6 +274,47 @@ test("支持 2026-11-25 新增的 Plugsky、Vikasit AI 与 NaraRouter 预设且�
   }
 });
 
+test("支持 2026-11-26 新增的 AnyAPI 预设且默认未激活", () => {
+  const unconfigured = resolveProviderConfig({ NODE_ENV: "test", AI_PROVIDER: "anyapi" });
+  assert.equal(unconfigured.configured, false);
+
+  const configured = resolveProviderConfig({
+    NODE_ENV: "test",
+    AI_PROVIDER: "anyapi",
+    ANYAPI_API_KEY: "test-placeholder-key",
+  });
+  assert.equal(configured.presetId, "anyapi");
+  assert.equal(configured.baseURL, "https://api.anyapi.ai/v1");
+  assert.equal(configured.primaryModel, "inclusionai/ling-3.0-flash-fin:free");
+  assert.equal(configured.fallbackModel, "qwen/qwen3.8-27b:free");
+  assert.equal(configured.configured, true);
+});
+
+test("支持 2026-11-26 新增的 rout.my 预设且保留 @free 模型后缀", () => {
+  const unconfigured = resolveProviderConfig({ NODE_ENV: "test", AI_PROVIDER: "routmy" });
+  assert.equal(unconfigured.configured, false);
+
+  const configured = resolveProviderConfig({
+    NODE_ENV: "test",
+    AI_PROVIDER: "routmy",
+    ROUTMY_API_KEY: "test-placeholder-key",
+  });
+  assert.equal(configured.presetId, "routmy");
+  assert.equal(configured.baseURL, "https://api.rout.my/v1");
+  assert.equal(configured.primaryModel, "deepseek/deepseek-v4.1-flash-1017@free");
+  assert.equal(configured.fallbackModel, "z-ai/glm-5.3-flash@free");
+  assert.equal(configured.configured, true);
+
+  const aliasConfigured = resolveProviderConfig({
+    NODE_ENV: "test",
+    AI_PROVIDER: "rout.my",
+    ROUTMY_API_KEY: "test-placeholder-key",
+  });
+  assert.equal(aliasConfigured.presetId, "routmy");
+  assert.equal(aliasConfigured.configured, true);
+});
+
+
 
 
 

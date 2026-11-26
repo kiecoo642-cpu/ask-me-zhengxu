@@ -30,7 +30,7 @@ npm run dev
 
 | 变量名 | 用途 | 必填 |
 | --- | --- | --- |
-| `AI_PROVIDER` | 模型 Provider 标识（默认 `deepseek`，可选 `gemini` / `openrouter` / `groq` / `together` / `nvidia` / `zai` / `sambanova` / `amd` / `novita` / `merkium` / `hetzner` / `unorouter` / `llmkiwi` / `cheapllm` / `exaone` / `requesty` / `zro` / `aihubmix` / `freeai` / `freeapiai` / `siliconflow` / `modelscope` / `orcarouter` / `bigmodel` / `sensenova` / `plugsky` / `vikasit` / `nararouter` / `openai` / `openai-compatible`） | 可选 |
+| `AI_PROVIDER` | 模型 Provider 标识（默认 `deepseek`，可选 `gemini` / `openrouter` / `groq` / `together` / `nvidia` / `zai` / `sambanova` / `amd` / `novita` / `merkium` / `hetzner` / `unorouter` / `llmkiwi` / `cheapllm` / `exaone` / `requesty` / `zro` / `aihubmix` / `freeai` / `freeapiai` / `siliconflow` / `modelscope` / `orcarouter` / `bigmodel` / `sensenova` / `plugsky` / `vikasit` / `nararouter` / `anyapi` / `routmy` / `openai` / `openai-compatible`） | 可选 |
 | `AI_BASE_URL` | 自定义 OpenAI-compatible 接口地址（未设置时按 `AI_PROVIDER` 使用预设地址） | 可选 |
 | `AI_API_KEY` | 通用模型 API 服务端密钥（优先读取；未设置时按 Provider 自动回退到 `DEEPSEEK_API_KEY` / `GEMINI_API_KEY` 等，禁止 `NEXT_PUBLIC_`） | 可选（启用模型问答时必填） |
 | `AI_MODEL` | 主生成模型名称（未设置时按 `AI_PROVIDER` 使用默认模型） | 可选 |
@@ -82,6 +82,8 @@ npm run dev
 - **Plugsky**：`AI_PROVIDER=plugsky`、`AI_BASE_URL=https://api.plugsky.com/v1`、`PLUGSKY_API_KEY=<your-key>`、`AI_MODEL=plugsky-lite`（备选 `plugsky-micro`，免费档仅此 2 款自家模型；官网确认 100% OpenAI-compatible。新账号每天 100 次请求 + 50,000 tokens（滚动 5 小时窗口约 21 次/10,400 tokens）、1 并发、30 RPM、单请求输出上限 2K tokens，免绑卡；免费模型为自家小模型、能力未验证）
 - **Vikasit AI**：`AI_PROVIDER=vikasit`、`AI_BASE_URL=https://api.vikasit.ai/v1`、`VIKASIT_API_KEY=<your-key>`、`AI_MODEL=vikasit-nova`（免费档仅此 1 款自家模型；官网确认 OpenAI-compatible，chat/streaming/tool calls 均支持。每天 2,000,000 tokens 免费，GitHub 登录取 key，免绑卡；官网附注免费额度可能调整；自家模型能力未验证）
 - **NaraRouter**：`AI_PROVIDER=nararouter`、`AI_BASE_URL=https://router.bynara.id/v1`、`NARAROUTER_API_KEY=<your-key>`、`AI_MODEL=agnes-2.5-flash`（免费档仅此 1 款自家模型，其余 47+ 目录模型均为按量付费，不列为备选；OpenAI-compatible，另兼容 Anthropic `/v1/messages`。每天 7,000,000 tokens、15 RPM，每日 07:00 WIB（00:00 UTC）重置，免绑卡，Google 登录取 key；免费清单已缩水（2026-08 第三方实测时有 3 款，2026-11-25 官网仅剩 Agnes 2.5 Flash 1 款），自家模型能力未验证）
+- **AnyAPI**：`AI_PROVIDER=anyapi`、`AI_BASE_URL=https://api.anyapi.ai/v1`、`ANYAPI_API_KEY=<your-key>`、`AI_MODEL=inclusionai/ling-3.0-flash-fin:free`（备选 `qwen/qwen3.8-27b:free`、`google/gemma-3n-4b:free`。Free \$0/month, 100,000 AnyTokens per day (platform-internal billing unit, 1 is about 1,000 tokens for most models), no card required; the full free-model list is only visible in the catalog after login; free-tier API calls are rate-limited, exact RPM is not published on the official site）
+- **rout.my**：`AI_PROVIDER=routmy`、`AI_BASE_URL=https://api.rout.my/v1`、`ROUTMY_API_KEY=<your-key>`、`AI_MODEL=deepseek/deepseek-v4.1-flash-1017@free`（备选 `z-ai/glm-5.3-flash@free`。Free plan \$0 (get the key via Discord login), 650,000 tokens per day; `@free` routes do not consume quota and remain usable after quota is exhausted; the free-route list may change; keep the `@free` route suffix in model IDs exactly as given — do NOT "fix" it into a model ID without the suffix）
 
 ## 验证命令
 

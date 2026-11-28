@@ -12,7 +12,6 @@ export type KnownProviderId =
   | "zai"
   | "sambanova"
   | "amd"
-  | "novita"
   | "merkium"
   | "hetzner"
   | "unorouter"
@@ -34,6 +33,13 @@ export type KnownProviderId =
   | "nararouter"
   | "anyapi"
   | "routmy"
+  | "inferbase"
+  | "kilo"
+  | "typhoon"
+  | "meganova"
+  | "bazaarlink"
+  | "dreamprompting"
+  | "llm7"
   | "openai"
   | "openai-compatible";
 
@@ -109,10 +115,10 @@ export const PROVIDER_PRESETS: Record<KnownProviderId, ProviderPreset> = {
     id: "sambanova",
     label: "SambaNova Cloud",
     defaultBaseURL: "https://api.sambanova.ai/v1",
-    defaultPrimaryModel: "DeepSeek-V3.1",
-    defaultFallbackModel: "gpt-oss-120b",
+    defaultPrimaryModel: "gpt-oss-120b",
+    defaultFallbackModel: "gemma-4-31B-it",
     envApiKeyNames: ["AI_API_KEY", "SAMBANOVA_API_KEY"],
-    notes: "Official rate-limit page (2026-11-04) confirms free tier restored (20 RPM / 20 RPD / 200k TPD without linked card); Aug 2026 live test returned 402, so user must verify with own key.",
+    notes: "Free tier has shrunk to only 2 models (gpt-oss-120b and gemma-4-31B-it); DeepSeek-V3.1 removed from free tier. Official rate-limit page confirms 20 RPM / 20 RPD / 200k TPD without linked card; verify with own key.",
   },
   amd: {
     id: "amd",
@@ -122,15 +128,6 @@ export const PROVIDER_PRESETS: Record<KnownProviderId, ProviderPreset> = {
     defaultFallbackModel: "DeepSeek-V4.1-Flash",
     envApiKeyNames: ["AI_API_KEY", "RADEON_API_KEY"],
     notes: "China site only, free daily pts cap (resets 00:00 Beijing time); trial/dev only (not for production). Model list changes often; verify via GET /v1/models.",
-  },
-  novita: {
-    id: "novita",
-    label: "Novita AI",
-    defaultBaseURL: "https://api.novita.ai/openai",
-    defaultPrimaryModel: "apodex/apodex-1.1-mini",
-    defaultFallbackModel: "apodex/apodex-1.1-mini",
-    envApiKeyNames: ["AI_API_KEY", "NOVITA_API_KEY"],
-    notes: "Apodex 1.1 Mini input/output $0 (256K context); all other models are paid. Public pages do not state whether zero-price models require an account balance.",
   },
   merkium: {
     id: "merkium",
@@ -323,6 +320,71 @@ export const PROVIDER_PRESETS: Record<KnownProviderId, ProviderPreset> = {
     envApiKeyNames: ["AI_API_KEY", "ROUTMY_API_KEY"],
     notes: "Free plan $0 (get the key via Discord login), 650,000 tokens per day; @free routes do not consume quota and remain usable after quota is exhausted; the free-route list may change; keep the @free route suffix in model IDs exactly as given — do NOT \"fix\" it into a model ID without the suffix.",
   },
+  inferbase: {
+    id: "inferbase",
+    label: "Inferbase",
+    defaultBaseURL: "https://api.inferbase.ai/v1",
+    defaultPrimaryModel: "auto",
+    defaultFallbackModel: "auto",
+    envApiKeyNames: ["AI_API_KEY", "INFERBASE_API_KEY"],
+    notes: "Free plan 5,000 requests/month; free hosted inference 100/day, 10/min, $0.50/day usage; per-request input <=8,192 tokens, output <=1,024 tokens; model output price <=$2.00/1M; over-limit returns 402.",
+  },
+  kilo: {
+    id: "kilo",
+    label: "Kilo Gateway",
+    defaultBaseURL: "https://api.kilo.ai/api/gateway",
+    defaultPrimaryModel: "kilo-auto/free",
+    defaultFallbackModel: "nvidia/nemotron-3-ultra-550b-a55b:free",
+    envApiKeyNames: ["AI_API_KEY", "KILO_API_KEY"],
+    defaultApiKey: "anonymous",
+    notes: "Optional KILO_API_KEY (anonymous use without a key is possible): anonymous 200 requests/hour per IP (free models only); free list rotates; upstream may log requests and use them to improve the service, so do not send sensitive content.",
+  },
+  typhoon: {
+    id: "typhoon",
+    label: "Typhoon (OpenTyphoon)",
+    defaultBaseURL: "https://api.opentyphoon.ai/v1",
+    defaultPrimaryModel: "typhoon-v2.5-30b-a3b-instruct",
+    defaultFallbackModel: "typhoon-v2.1-12b-instruct",
+    envApiKeyNames: ["AI_API_KEY", "TYPHOON_API_KEY"],
+    notes: "Official FAQ says research showcase, free to use; Thai-language specialist, beta, no formal support, no numeric rate limit; general Q&A ability unverified.",
+  },
+  meganova: {
+    id: "meganova",
+    label: "MegaNova AI",
+    defaultBaseURL: "https://api.meganova.ai/v1",
+    defaultPrimaryModel: "mistralai/Mistral-Small-3.2-24B-Instruct-2506",
+    defaultFallbackModel: "meganova-ai/manta-mini-1.0",
+    envApiKeyNames: ["AI_API_KEY", "MEGANOVA_API_KEY"],
+    notes: "Tier 1 is 50 requests/day per model, 60 RPM, 200,000 TPM; most free models are role-play fine-tunes, terms say for evaluation/interactive use only and grant a broad license over submitted content; the only general chat model is Mistral Small 3.2.",
+  },
+  bazaarlink: {
+    id: "bazaarlink",
+    label: "BazaarLink",
+    defaultBaseURL: "https://api.bazaarlink.ai/v1",
+    defaultPrimaryModel: "qwen/qwen3.7-flash",
+    defaultFallbackModel: "deepseek/deepseek-v4-flash-0731free",
+    envApiKeyNames: ["AI_API_KEY", "BAZAARLINK_API_KEY"],
+    notes: "No card required; without a card 10 RPM / 60 weighted units per day (with credit 20 RPM / 120 units), 2 concurrent, resets daily at 00:00 UTC; free list rotates (plus an auto:free route); long inputs consume more weighted units.",
+  },
+  dreamprompting: {
+    id: "dreamprompting",
+    label: "DreamPrompting",
+    defaultBaseURL: "https://dreamprompting.com/api/v1",
+    defaultPrimaryModel: "auto",
+    defaultFallbackModel: "auto",
+    envApiKeyNames: ["AI_API_KEY", "DREAMPROMPTING_API_KEY"],
+    notes: "No card required; 100 RPM per IP, per account rolling 24h 5,000 requests + 500,000 tokens; gateway auto-selects upstream with failover and aggregates upstream free tiers, availability varies with the upstream pool.",
+  },
+  llm7: {
+    id: "llm7",
+    label: "LLM7.io",
+    defaultBaseURL: "https://api.llm7.io/v1",
+    defaultPrimaryModel: "gpt-oss:20b",
+    defaultFallbackModel: "codestral-latest",
+    envApiKeyNames: ["AI_API_KEY", "LLM7_API_KEY"],
+    defaultApiKey: "unused",
+    notes: "Optional LLM7_API_KEY (anonymous use without a key is possible, Authorization may be set to unused): only turbo-tier models are free; the site no longer publishes free-quota numbers, and the free tier may stop at any time without notice.",
+  },
   openai: {
     id: "openai",
     label: "OpenAI",
@@ -362,7 +424,6 @@ function normalizeProviderId(raw?: string): KnownProviderId {
   if (value === "zai" || value === "z.ai" || value === "zhipu" || value === "glm") return "zai";
   if (value === "sambanova") return "sambanova";
   if (value === "amd" || value === "radeon" || value === "amd-token-factory") return "amd";
-  if (value === "novita") return "novita";
   if (value === "merkium") return "merkium";
   if (value === "hetzner") return "hetzner";
   if (value === "unorouter") return "unorouter";
@@ -384,6 +445,13 @@ function normalizeProviderId(raw?: string): KnownProviderId {
   if (value === "nararouter" || value === "nara-router") return "nararouter";
   if (value === "anyapi") return "anyapi";
   if (value === "routmy" || value === "rout.my") return "routmy";
+  if (value === "inferbase") return "inferbase";
+  if (value === "kilo" || value === "kilogateway" || value === "kilo-gateway") return "kilo";
+  if (value === "typhoon" || value === "opentyphoon") return "typhoon";
+  if (value === "meganova" || value === "meganova-ai") return "meganova";
+  if (value === "bazaarlink") return "bazaarlink";
+  if (value === "dreamprompting") return "dreamprompting";
+  if (value === "llm7" || value === "llm7.io") return "llm7";
   if (value === "openai") return "openai";
   return "openai-compatible";
 }

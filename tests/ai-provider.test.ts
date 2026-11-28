@@ -87,11 +87,10 @@ test("支持 OpenRouter、Groq、Together、NVIDIA NIM、Z.ai GLM 与自定义�
   assert.equal(custom.configured, true);
 });
 
-test("支持 2026-11-17 新增的 9 个免费 OpenAI-compatible Provider 预设且默认未激活", () => {
+test("支持 2026-11-17 新增的免费 OpenAI-compatible Provider 预设且默认未激活", () => {
   const cases = [
-    { id: "sambanova", keyEnv: "SAMBANOVA_API_KEY", baseURL: "https://api.sambanova.ai/v1", primary: "DeepSeek-V3.1", fallback: "gpt-oss-120b" },
+    { id: "sambanova", keyEnv: "SAMBANOVA_API_KEY", baseURL: "https://api.sambanova.ai/v1", primary: "gpt-oss-120b", fallback: "gemma-4-31B-it" },
     { id: "amd", keyEnv: "RADEON_API_KEY", baseURL: "https://developer.amd.com.cn/radeon/api/v1", primary: "DeepSeek-V4-Flash", fallback: "DeepSeek-V4.1-Flash" },
-    { id: "novita", keyEnv: "NOVITA_API_KEY", baseURL: "https://api.novita.ai/openai", primary: "apodex/apodex-1.1-mini", fallback: "apodex/apodex-1.1-mini" },
     { id: "merkium", keyEnv: "MERKIUM_API_KEY", baseURL: "https://chat.merkium.nl/api/v1", primary: "ganymede-1.1", fallback: "pluto-1.2-pro" },
     { id: "hetzner", keyEnv: "HETZNER_API_KEY", baseURL: "https://inference.hetzner.com/api/v1", primary: "Qwen/Qwen3.6-35B-A3B-FP8", fallback: "Qwen3.8-27B" },
     { id: "unorouter", keyEnv: "UNOROUTER_API_KEY", baseURL: "https://api.unorouter.com/v1", primary: "gemini-3.8-flash:free", fallback: "gemini-3.8-flash:free" },
@@ -313,6 +312,67 @@ test("支持 2026-11-26 新增的 rout.my 预设且保留 @free 模型后缀", (
   assert.equal(aliasConfigured.presetId, "routmy");
   assert.equal(aliasConfigured.configured, true);
 });
+
+test("支持 2026-11-27/28 新增的 Inferbase、Typhoon、MegaNova、BazaarLink 与 DreamPrompting 预设且默认未激活", () => {
+  const cases = [
+    { id: "inferbase", keyEnv: "INFERBASE_API_KEY", baseURL: "https://api.inferbase.ai/v1", primary: "auto", fallback: "auto" },
+    { id: "typhoon", keyEnv: "TYPHOON_API_KEY", baseURL: "https://api.opentyphoon.ai/v1", primary: "typhoon-v2.5-30b-a3b-instruct", fallback: "typhoon-v2.1-12b-instruct" },
+    { id: "meganova", keyEnv: "MEGANOVA_API_KEY", baseURL: "https://api.meganova.ai/v1", primary: "mistralai/Mistral-Small-3.2-24B-Instruct-2506", fallback: "meganova-ai/manta-mini-1.0" },
+    { id: "bazaarlink", keyEnv: "BAZAARLINK_API_KEY", baseURL: "https://api.bazaarlink.ai/v1", primary: "qwen/qwen3.7-flash", fallback: "deepseek/deepseek-v4-flash-0731free" },
+    { id: "dreamprompting", keyEnv: "DREAMPROMPTING_API_KEY", baseURL: "https://dreamprompting.com/api/v1", primary: "auto", fallback: "auto" },
+  ] as const;
+
+  for (const item of cases) {
+    const unconfigured = resolveProviderConfig({ NODE_ENV: "test", AI_PROVIDER: item.id });
+    assert.equal(unconfigured.configured, false);
+
+    const configured = resolveProviderConfig({
+      NODE_ENV: "test",
+      AI_PROVIDER: item.id,
+      [item.keyEnv]: "test-placeholder-key",
+    });
+    assert.equal(configured.presetId, item.id);
+    assert.equal(configured.baseURL, item.baseURL);
+    assert.equal(configured.primaryModel, item.primary);
+    assert.equal(configured.fallbackModel, item.fallback);
+    assert.equal(configured.configured, true);
+  }
+});
+
+test("支持 2026-11-27/28 新增的可选密钥 Provider（Kilo Gateway 与 LLM7.io）", () => {
+  const kiloAnon = resolveProviderConfig({ NODE_ENV: "test", AI_PROVIDER: "kilo" });
+  assert.equal(kiloAnon.presetId, "kilo");
+  assert.equal(kiloAnon.baseURL, "https://api.kilo.ai/api/gateway");
+  assert.equal(kiloAnon.primaryModel, "kilo-auto/free");
+  assert.equal(kiloAnon.fallbackModel, "nvidia/nemotron-3-ultra-550b-a55b:free");
+  assert.equal(kiloAnon.apiKey, "anonymous");
+  assert.equal(kiloAnon.configured, true);
+
+  const kiloWithKey = resolveProviderConfig({
+    NODE_ENV: "test",
+    AI_PROVIDER: "kilo-gateway",
+    KILO_API_KEY: "test-kilo-key",
+  });
+  assert.equal(kiloWithKey.presetId, "kilo");
+  assert.equal(kiloWithKey.apiKey, "test-kilo-key");
+
+  const llm7Anon = resolveProviderConfig({ NODE_ENV: "test", AI_PROVIDER: "llm7" });
+  assert.equal(llm7Anon.presetId, "llm7");
+  assert.equal(llm7Anon.baseURL, "https://api.llm7.io/v1");
+  assert.equal(llm7Anon.primaryModel, "gpt-oss:20b");
+  assert.equal(llm7Anon.fallbackModel, "codestral-latest");
+  assert.equal(llm7Anon.apiKey, "unused");
+  assert.equal(llm7Anon.configured, true);
+
+  const llm7WithKey = resolveProviderConfig({
+    NODE_ENV: "test",
+    AI_PROVIDER: "llm7.io",
+    LLM7_API_KEY: "test-llm7-key",
+  });
+  assert.equal(llm7WithKey.presetId, "llm7");
+  assert.equal(llm7WithKey.apiKey, "test-llm7-key");
+});
+
 
 
 
